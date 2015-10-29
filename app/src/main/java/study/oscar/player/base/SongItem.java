@@ -1,4 +1,4 @@
-package study.oscar.mymusicplayer.base;
+package study.oscar.player.base;
 
 import android.graphics.Bitmap;
 

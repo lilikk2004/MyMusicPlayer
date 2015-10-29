@@ -1,4 +1,4 @@
-package study.oscar.mymusicplayer.manager;
+package study.oscar.player.manager;
 
 import android.media.MediaPlayer;
 

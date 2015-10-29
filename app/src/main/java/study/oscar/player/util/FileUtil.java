@@ -1,4 +1,4 @@
-package study.oscar.mymusicplayer.util;
+package study.oscar.player.util;
 
 import android.os.Environment;
 

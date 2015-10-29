@@ -1,4 +1,4 @@
-package study.oscar.mymusicplayer.manager;
+package study.oscar.player.manager;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -29,7 +29,7 @@ public class MediaStoreManager {
      *
      * @return Cursor 返回的Cursor指向当前MP3
      */
-    static private Cursor getCursorfromPath(String filePath,Context context) {
+    static private Cursor getCursorFromPath(String filePath,Context context) {
         String path = null;
         Cursor c = context.getContentResolver().query(
                 MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, null, null, null,
@@ -81,7 +81,7 @@ public class MediaStoreManager {
     }
 
     public void setCursor(String filePath,Context context) {
-        currentCursor = getCursorfromPath(filePath, context);
+        currentCursor = getCursorFromPath(filePath, context);
     }
 
     public void closeCursor() {

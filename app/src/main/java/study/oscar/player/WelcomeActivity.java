@@ -1,4 +1,4 @@
-package study.oscar.mymusicplayer;
+package study.oscar.player;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -11,7 +11,8 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.ImageView;
 
-import study.oscar.mymusicplayer.manager.SongListManager;
+import study.oscar.player.manager.SongListManager;
+import study.oscar.player.service.MediaPlayBackService;
 
 /**
  * Created by oscar on 2015/9/14.
@@ -44,6 +45,8 @@ public class WelcomeActivity extends Activity implements Animation.AnimationList
         @Override
         public void run() {
             SongListManager.getInstance().loadSongList(getApplicationContext());
+            Intent intent=new Intent(WelcomeActivity.this,MediaPlayBackService.class);
+            startService(intent);
             Message msg = new Message();
             animHandler.sendMessage(msg);
         }

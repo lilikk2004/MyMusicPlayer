@@ -1,4 +1,4 @@
-package study.oscar.mymusicplayer;
+package study.oscar.player;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

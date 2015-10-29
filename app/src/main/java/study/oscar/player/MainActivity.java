@@ -1,4 +1,4 @@
-package study.oscar.mymusicplayer;
+package study.oscar.player;
 
 import android.app.Activity;
 import android.app.Notification;
@@ -7,7 +7,6 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,8 +15,8 @@ import android.widget.RemoteViews;
 import android.widget.TextView;
 
 import co.mobiwise.library.MusicPlayerView;
-import study.oscar.mymusicplayer.manager.SongListManager;
-import study.oscar.mymusicplayer.service.MediaPlayBackService;
+import study.oscar.player.manager.SongListManager;
+import study.oscar.player.service.MediaPlayBackService;
 
 public class MainActivity extends Activity implements View.OnClickListener{
 
@@ -48,6 +47,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
         mSongListManager = SongListManager.getInstance();
         refreshSongInfo();
         refreshSongBtn();
+        showCustomView();
 
 
         mpv.setOnClickListener(new View.OnClickListener() {
@@ -147,9 +147,9 @@ public class MainActivity extends Activity implements View.OnClickListener{
         PendingIntent prepi = PendingIntent.getService(this, 0, preIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         remoteViews.setOnClickPendingIntent(R.id.statusBar_prev, prepi);//----设置对应的按钮ID监控
 
-        Intent pauaseOrStartIntent=new Intent(this,MediaPlayBackService.class);
-        pauaseOrStartIntent.putExtra("action", "pause");
-        PendingIntent pausepi = PendingIntent.getService(this, 1, pauaseOrStartIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        Intent pauseOrStartIntent=new Intent(this,MediaPlayBackService.class);
+        pauseOrStartIntent.putExtra("action", "pause");
+        PendingIntent pausepi = PendingIntent.getService(this, 1, pauseOrStartIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         remoteViews.setOnClickPendingIntent(R.id.statusBar_pause, pausepi);//----设置对应的按钮ID监控
 
         Intent nextIntent=new Intent(this,MediaPlayBackService.class);

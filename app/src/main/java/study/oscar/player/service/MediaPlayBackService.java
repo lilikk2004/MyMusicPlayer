@@ -1,14 +1,18 @@
-package study.oscar.mymusicplayer.service;
+package study.oscar.player.service;
 
 import android.app.IntentService;
 import android.content.Intent;
 
-import study.oscar.mymusicplayer.manager.SongListManager;
+import study.oscar.player.manager.SongListManager;
 
 /**
  * Created by oscar on 2015/10/6.
  */
 public class MediaPlayBackService extends IntentService{
+
+    public MediaPlayBackService() {
+        super("MediaPlayBackService");
+    }
     /**
      * Creates an IntentService.  Invoked by your subclass's constructor.
      *
@@ -21,6 +25,7 @@ public class MediaPlayBackService extends IntentService{
     @Override
     protected void onHandleIntent(Intent intent) {
         String action = intent.getStringExtra("action");
+        if(action == null) return;
         if(action.equals("pre")){
             SongListManager.getInstance().prevSong();
         }else if(action.equals("next")){

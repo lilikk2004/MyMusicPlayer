@@ -1,4 +1,4 @@
-package study.oscar.mymusicplayer.manager;
+package study.oscar.player.manager;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -7,8 +7,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import study.oscar.mymusicplayer.base.SongItem;
-import study.oscar.mymusicplayer.util.FileUtil;
+import study.oscar.player.base.SongItem;
+import study.oscar.player.util.FileUtil;
 
 /**
  * Created by oscar on 2015/9/13.
