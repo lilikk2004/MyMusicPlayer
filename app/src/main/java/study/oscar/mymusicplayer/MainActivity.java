@@ -16,8 +16,6 @@ import android.widget.RemoteViews;
 import android.widget.TextView;
 
 import co.mobiwise.library.MusicPlayerView;
-import study.oscar.mymusicplayer.base.SongItem;
-import study.oscar.mymusicplayer.manager.MediaPlayerManager;
 import study.oscar.mymusicplayer.manager.SongListManager;
 import study.oscar.mymusicplayer.service.MediaPlayBackService;
 
@@ -26,6 +24,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
     final static String TAG = "MainActivity";
 
     MusicPlayerView mpv = null;
+    SongListManager mSongListManager = null;
     TextView mTextViewSong = null;
     TextView mTextViewSinger = null;
 
@@ -46,8 +45,8 @@ public class MainActivity extends Activity implements View.OnClickListener{
         nextBtn.setOnClickListener(this);
         prevBtn.setOnClickListener(this);
 
-        SongItem curSongItem = SongListManager.getInstance().getCurSong();
-        setSongInfo(curSongItem);
+        mSongListManager = SongListManager.getInstance();
+        refreshSongInfo();
         refreshSongBtn();
 
 
@@ -56,11 +55,11 @@ public class MainActivity extends Activity implements View.OnClickListener{
             public void onClick(View v) {
 
                 if (mpv.isRotating()) {
-                    MediaPlayerManager.getInstance().pause();
+                    mSongListManager.pauseSong();
                     mpv.stop();
                 }
                 else {
-                    MediaPlayerManager.getInstance().start();
+                    mSongListManager.playSong();
                     mpv.start();
                 }
             }
@@ -74,15 +73,13 @@ public class MainActivity extends Activity implements View.OnClickListener{
         mOpenButton.setOnClickListener(this);*/
     }
 
-    void setSongInfo(SongItem curSongItem){
-        MediaPlayerManager.getInstance().setMediaByFilePath(SongListManager.getInstance().getFolderPath() + curSongItem.getFileName());
-
-        mpv.setBitmap(curSongItem.getCover());
-        mTextViewSong.setText(curSongItem.getSongName());
-        mTextViewSinger.setText(curSongItem.getSingerName());
+    void refreshSongInfo(){
+        mpv.setBitmap(mSongListManager.getCurCover());
+        mTextViewSong.setText(mSongListManager.getCurSongName());
+        mTextViewSinger.setText(mSongListManager.getCurSingerName());
 
         mpv.setProgress(0);
-        mpv.setMax(curSongItem.getDuration() / 1000);
+        mpv.setMax(mSongListManager.getCurDuration() / 1000);
     }
 
     void refreshSongBtn(){
@@ -126,18 +123,14 @@ public class MainActivity extends Activity implements View.OnClickListener{
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.next:
-                SongItem nextSongItem = SongListManager.getInstance().nextSong();
-                Log.d(TAG, "R.id.next");
-                setSongInfo(nextSongItem);
-                Log.d(TAG, "setSongInfo(nextSongItem)");
+                mSongListManager.nextSong();
+                refreshSongInfo();
                 refreshSongBtn();
                 mpv.stop();
                 break;
             case R.id.previous:
-                SongItem prevSongItem = SongListManager.getInstance().prevSong();
-                Log.d(TAG, "R.id.previous");
-                setSongInfo(prevSongItem);
-                Log.d(TAG, "setSongInfo(prevSongItem)");
+                mSongListManager.prevSong();
+                refreshSongInfo();
                 refreshSongBtn();
                 mpv.stop();
                 break;

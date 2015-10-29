@@ -28,6 +28,11 @@ public class SongListManager {
     String curMusicFolder = FileUtil.getMusicFolder();
     boolean isLoaded = false;
     int mCurSongIndex = 0;
+    MediaPlayerManager mPlayManager;
+
+    SongListManager(){
+        mPlayManager = MediaPlayerManager.getInstance();
+    }
 
     public String getFolderPath(){
         return curMusicFolder;
@@ -64,6 +69,8 @@ public class SongListManager {
 
         isLoaded = true;
 
+        mPlayManager.setMediaByFilePath(curMusicFolder + getCurSong().getFileName());
+
         return true;
     }
 
@@ -83,14 +90,16 @@ public class SongListManager {
         return getSongPath(mCurSongIndex);
     }
 
-    public SongItem nextSong(){
+    public void nextSong(){
         if(mCurSongIndex < songList.size() - 1) mCurSongIndex++;
-        return getSongPath(mCurSongIndex);
+        if(mCurSongIndex >= songList.size() - 1 || mCurSongIndex < 0) return;
+        mPlayManager.setMediaByFilePath(curMusicFolder + getCurSong().getFileName());
     }
 
-    public SongItem prevSong(){
+    public void prevSong(){
         if(mCurSongIndex > 0) mCurSongIndex--;
-        return getSongPath(mCurSongIndex);
+        if(mCurSongIndex >= songList.size() - 1 || mCurSongIndex < 0) return;
+        mPlayManager.setMediaByFilePath(curMusicFolder + getCurSong().getFileName());
     }
 
     public boolean hasNext(){
@@ -103,5 +112,41 @@ public class SongListManager {
         if( songList.size() <= 0) return false;
         if(mCurSongIndex >= songList.size() || mCurSongIndex <= 0) return false;
         return true;
+    }
+
+    public boolean playSong(){
+        if(!isLoaded){
+            return false;
+        }
+        mPlayManager.start();
+        return true;
+    }
+
+    public boolean pauseSong(){
+        if(!isLoaded){
+            return false;
+        }
+        mPlayManager.pause();
+        return true;
+    }
+
+    public String getCurSongName(){
+        if(mCurSongIndex >= songList.size() - 1 || mCurSongIndex < 0) return "";
+        return getCurSong().getSongName();
+    }
+
+    public String getCurSingerName(){
+        if(mCurSongIndex >= songList.size() - 1 || mCurSongIndex < 0) return "";
+        return getCurSong().getSingerName();
+    }
+
+    public int getCurDuration(){
+        if(mCurSongIndex >= songList.size() - 1 || mCurSongIndex < 0) return 0;
+        return getCurSong().getDuration();
+    }
+
+    public Bitmap getCurCover(){
+        if(mCurSongIndex >= songList.size() - 1 || mCurSongIndex < 0) return null;
+        return getCurSong().getCover();
     }
 }
