@@ -45,8 +45,6 @@ public class WelcomeActivity extends Activity implements Animation.AnimationList
         @Override
         public void run() {
             SongListManager.getInstance().loadSongList(getApplicationContext());
-            Intent intent=new Intent(WelcomeActivity.this,MediaPlayBackService.class);
-            startService(intent);
             Message msg = new Message();
             animHandler.sendMessage(msg);
         }

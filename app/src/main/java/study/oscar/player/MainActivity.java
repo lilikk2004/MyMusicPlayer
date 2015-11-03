@@ -4,9 +4,13 @@ import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.IBinder;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,6 +30,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
     SongListManager mSongListManager = null;
     TextView mTextViewSong = null;
     TextView mTextViewSinger = null;
+    ServiceConnection serviceConnection;
 
     Button nextBtn = null;
     Button prevBtn = null;
@@ -47,6 +52,20 @@ public class MainActivity extends Activity implements View.OnClickListener{
         mSongListManager = SongListManager.getInstance();
         refreshSongInfo();
         refreshSongBtn();
+
+        serviceConnection=new ServiceConnection() {
+            @Override
+            public void onServiceDisconnected(ComponentName name) {
+            }
+
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder service) {
+                Log.d("onServiceConnected", "connected");
+            }
+        };
+        Intent intent=new Intent(this,MediaPlayBackService.class);
+        startService(intent);
+        //bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
         showCustomView();
 
 

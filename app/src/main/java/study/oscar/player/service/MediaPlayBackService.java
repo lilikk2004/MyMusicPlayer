@@ -2,6 +2,7 @@ package study.oscar.player.service;
 
 import android.app.IntentService;
 import android.content.Intent;
+import android.util.Log;
 
 import study.oscar.player.manager.SongListManager;
 
@@ -9,6 +10,8 @@ import study.oscar.player.manager.SongListManager;
  * Created by oscar on 2015/10/6.
  */
 public class MediaPlayBackService extends IntentService{
+
+    static final String TAG =  "MediaPlayBackService";
 
     public MediaPlayBackService() {
         super("MediaPlayBackService");
@@ -27,8 +30,10 @@ public class MediaPlayBackService extends IntentService{
         String action = intent.getStringExtra("action");
         if(action == null) return;
         if(action.equals("pre")){
+            Log.d(TAG,"pre");
             SongListManager.getInstance().prevSong();
         }else if(action.equals("next")){
+            Log.d(TAG,"next");
             SongListManager.getInstance().nextSong();
         }else if(action.equals("pause")){
             //SongListManager.getInstance().
