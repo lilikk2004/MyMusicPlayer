@@ -1,11 +1,7 @@
 package study.oscar.player;
 
 import android.app.Activity;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
@@ -15,10 +11,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.RemoteViews;
 import android.widget.TextView;
 
 import co.mobiwise.library.MusicPlayerView;
+import study.oscar.player.manager.RemoteViewManager;
 import study.oscar.player.manager.SongListManager;
 import study.oscar.player.service.MediaPlayBackService;
 
@@ -28,6 +24,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
 
     MusicPlayerView mpv = null;
     SongListManager mSongListManager = null;
+    RemoteViewManager mRemoteManager = null;
     TextView mTextViewSong = null;
     TextView mTextViewSinger = null;
     ServiceConnection serviceConnection;
@@ -50,6 +47,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
         prevBtn.setOnClickListener(this);
 
         mSongListManager = SongListManager.getInstance();
+        mRemoteManager = RemoteViewManager.getInstance(this);
         refreshSongInfo();
         refreshSongBtn();
 
@@ -66,7 +64,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
         Intent intent=new Intent(this,MediaPlayBackService.class);
         startService(intent);
         //bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
-        showCustomView();
+        mRemoteManager.initView();
 
 
         mpv.setOnClickListener(new View.OnClickListener() {
@@ -154,42 +152,5 @@ public class MainActivity extends Activity implements View.OnClickListener{
                 mpv.stop();
                 break;
         }
-    }
-
-    private NotificationManager showCustomView() {
-        RemoteViews remoteViews = new RemoteViews(getPackageName(),
-                R.layout.statusbar);
-        //设置按钮事件
-
-        Intent preIntent = new Intent(this,MediaPlayBackService.class);
-        preIntent.putExtra("action", "pre");
-        PendingIntent prepi = PendingIntent.getService(this, 0, preIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        remoteViews.setOnClickPendingIntent(R.id.statusBar_prev, prepi);//----设置对应的按钮ID监控
-
-        Intent pauseOrStartIntent=new Intent(this,MediaPlayBackService.class);
-        pauseOrStartIntent.putExtra("action", "pause");
-        PendingIntent pausepi = PendingIntent.getService(this, 1, pauseOrStartIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        remoteViews.setOnClickPendingIntent(R.id.statusBar_pause, pausepi);//----设置对应的按钮ID监控
-
-        Intent nextIntent=new Intent(this,MediaPlayBackService.class);
-        nextIntent.putExtra("action", "next");
-        PendingIntent nextpi = PendingIntent.getService(this, 2, nextIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        remoteViews.setOnClickPendingIntent(R.id.statusBar_next, nextpi);//----设置对应的按钮ID监控
-
-/*        Intent closeIntent=new Intent(this,PlayerReceiver.class);
-        closeIntent.putExtra("action", "close");
-        closeIntent.setAction("com.lttclaw.playerReceiver");
-        PendingIntent closepi=PendingIntent.getBroadcast(this, 0, closeIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        remoteViews.setOnClickPendingIntent(R.id.close, closepi);*/
-
-        Notification.Builder builder = new Notification.Builder(MainActivity.this);
-        builder.setContent(remoteViews).setSmallIcon(R.mipmap.ic_launcher)
-                .setOngoing(true)
-                .setTicker("music is playing");
-        Notification notification=builder.build();
-        //MyApplication.getInstance().notification=notification;
-        NotificationManager manager=(NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
-        manager.notify(1, notification);
-        return manager;
     }
 }
