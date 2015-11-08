@@ -8,7 +8,7 @@ import android.content.Intent;
 import android.widget.RemoteViews;
 
 import study.oscar.player.R;
-import study.oscar.player.service.MediaPlayBackService;
+import study.oscar.player.service.MusicPlayService;
 
 /**
  * Created by oscar on 2015/11/4.
@@ -35,17 +35,17 @@ public class RemoteViewManager {
                 R.layout.statusbar);
         //设置按钮事件
 
-        Intent preIntent = new Intent(mContext,MediaPlayBackService.class);
+        Intent preIntent = new Intent(mContext,MusicPlayService.class);
         preIntent.putExtra("action", "pre");
         PendingIntent prePi = PendingIntent.getService(mContext, 0, preIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         remoteViews.setOnClickPendingIntent(R.id.statusBar_prev, prePi);//----设置对应的按钮ID监控
 
-        Intent pauseOrStartIntent=new Intent(mContext,MediaPlayBackService.class);
+        Intent pauseOrStartIntent=new Intent(mContext,MusicPlayService.class);
         pauseOrStartIntent.putExtra("action", "pause");
         PendingIntent pausePi = PendingIntent.getService(mContext, 1, pauseOrStartIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         remoteViews.setOnClickPendingIntent(R.id.statusBar_pause, pausePi);//----设置对应的按钮ID监控
 
-        Intent nextIntent=new Intent(mContext,MediaPlayBackService.class);
+        Intent nextIntent=new Intent(mContext,MusicPlayService.class);
         nextIntent.putExtra("action", "next");
         PendingIntent nextPi = PendingIntent.getService(mContext, 2, nextIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         remoteViews.setOnClickPendingIntent(R.id.statusBar_next, nextPi);//----设置对应的按钮ID监控

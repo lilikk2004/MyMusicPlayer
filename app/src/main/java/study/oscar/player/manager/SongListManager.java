@@ -11,11 +11,10 @@ import study.oscar.player.base.SongItem;
 import study.oscar.player.util.FileUtil;
 
 /**
- * Created by oscar on 2015/9/13.
+ * Created by oscar on 2015/11/8.
  */
 public class SongListManager {
-    final static String TAG = "SongListManager";
-
+    final static String TAG = "RemoteViewManager";
     static SongListManager mInstance = null;
     static public SongListManager getInstance(){
         if(mInstance == null){
@@ -24,15 +23,10 @@ public class SongListManager {
         return mInstance;
     }
 
+    int mCurSongIndex = 0;
+    boolean isLoaded = false;
     List<SongItem> songList = new ArrayList<SongItem>();
     String curMusicFolder = FileUtil.getMusicFolder();
-    boolean isLoaded = false;
-    int mCurSongIndex = 0;
-    MediaPlayerManager mPlayManager;
-
-    SongListManager(){
-        mPlayManager = MediaPlayerManager.getInstance();
-    }
 
     public String getFolderPath(){
         return curMusicFolder;
@@ -69,8 +63,6 @@ public class SongListManager {
 
         isLoaded = true;
 
-        mPlayManager.setMediaByFilePath(curMusicFolder + getCurSong().getFileName());
-
         return true;
     }
 
@@ -93,13 +85,11 @@ public class SongListManager {
     public void nextSong(){
         if(mCurSongIndex < songList.size() - 1) mCurSongIndex++;
         if(mCurSongIndex >= songList.size() - 1 || mCurSongIndex < 0) return;
-        mPlayManager.setMediaByFilePath(curMusicFolder + getCurSong().getFileName());
     }
 
     public void prevSong(){
         if(mCurSongIndex > 0) mCurSongIndex--;
         if(mCurSongIndex >= songList.size() - 1 || mCurSongIndex < 0) return;
-        mPlayManager.setMediaByFilePath(curMusicFolder + getCurSong().getFileName());
     }
 
     public boolean hasNext(){
@@ -111,22 +101,6 @@ public class SongListManager {
     public boolean hasPrev(){
         if( songList.size() <= 0) return false;
         if(mCurSongIndex >= songList.size() || mCurSongIndex <= 0) return false;
-        return true;
-    }
-
-    public boolean playSong(){
-        if(!isLoaded){
-            return false;
-        }
-        mPlayManager.start();
-        return true;
-    }
-
-    public boolean pauseSong(){
-        if(!isLoaded){
-            return false;
-        }
-        mPlayManager.pause();
         return true;
     }
 

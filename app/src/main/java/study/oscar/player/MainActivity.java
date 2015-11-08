@@ -1,8 +1,11 @@
 package study.oscar.player;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -15,15 +18,15 @@ import android.widget.TextView;
 
 import co.mobiwise.library.MusicPlayerView;
 import study.oscar.player.manager.RemoteViewManager;
-import study.oscar.player.manager.SongListManager;
-import study.oscar.player.service.MediaPlayBackService;
+import study.oscar.player.service.MusicPlayService;
+import study.oscar.player.util.Consts;
 
 public class MainActivity extends Activity implements View.OnClickListener{
 
     final static String TAG = "MainActivity";
 
     MusicPlayerView mpv = null;
-    SongListManager mSongListManager = null;
+    MusicPlayService mPlayService = null;
     RemoteViewManager mRemoteManager = null;
     TextView mTextViewSong = null;
     TextView mTextViewSinger = null;
@@ -31,6 +34,9 @@ public class MainActivity extends Activity implements View.OnClickListener{
 
     Button nextBtn = null;
     Button prevBtn = null;
+
+    BroadcastReceiver mReceiver;
+
 
 
     @Override
@@ -46,7 +52,6 @@ public class MainActivity extends Activity implements View.OnClickListener{
         nextBtn.setOnClickListener(this);
         prevBtn.setOnClickListener(this);
 
-        mSongListManager = SongListManager.getInstance();
         mRemoteManager = RemoteViewManager.getInstance(this);
         refreshSongInfo();
         refreshSongBtn();
@@ -59,35 +64,62 @@ public class MainActivity extends Activity implements View.OnClickListener{
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {
                 Log.d("onServiceConnected", "connected");
+                if(service == null){
+                    return;
+                }
+                mPlayService = ((MusicPlayService.MusicBinder)service).getService();
             }
         };
-        Intent intent=new Intent(this,MediaPlayBackService.class);
-        startService(intent);
-        //bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
+        Intent intent=new Intent(this,MusicPlayService.class);
+        bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
         mRemoteManager.initView();
 
 
         mpv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                if (mpv.isRotating()) {
-                    mSongListManager.pauseSong();
-                    mpv.stop();
+                if(mPlayService == null){
+                    return;
                 }
-                else {
-                    mSongListManager.playSong();
-                    mpv.start();
+                if (mpv.isRotating()) {
+                    mPlayService.pauseSong();
+                } else {
+                    mPlayService.playSong();
                 }
             }
         });
-/*        mPlayButton = (Button)findViewById(R.id.button_play);
-        mStopButton = (Button)findViewById(R.id.button_stop);
-        mPauseButton = (Button)findViewById(R.id.button_pause);
-        mOpenButton = (Button)findViewById(R.id.button_open_file);
-        mSongCover = (ImageView)findViewById(R.id.image_cover);
-        mPauseButton.setOnClickListener(this);
-        mOpenButton.setOnClickListener(this);*/
+
+        mReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String strAction = intent.getAction();
+                if(Consts.MY_PRE_ACTION.equals(strAction)){
+                    refreshSongInfo();
+                    refreshSongBtn();
+                    mpv.stop();
+                }
+                else if(Consts.MY_NEXT_ACTION.equals(strAction)){
+                    refreshSongInfo();
+                    refreshSongBtn();
+                    mpv.stop();
+                }
+                else if(Consts.MY_PLAY_ACTION.equals(strAction)){
+                    mpv.start();
+                }
+                else if(Consts.MY_PAUSE_ACTION.equals(strAction)){
+                    mpv.stop();
+                }
+            }
+        };
+
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(Consts.MY_PRE_ACTION);
+        filter.addAction(Consts.MY_NEXT_ACTION);
+        filter.addAction(Consts.MY_PLAY_ACTION);
+        filter.addAction(Consts.MY_PAUSE_ACTION);
+
+        registerReceiver(mReceiver,filter);
+
     }
 
     void refreshSongInfo(){
@@ -141,15 +173,9 @@ public class MainActivity extends Activity implements View.OnClickListener{
         switch (view.getId()){
             case R.id.next:
                 mSongListManager.nextSong();
-                refreshSongInfo();
-                refreshSongBtn();
-                mpv.stop();
                 break;
             case R.id.previous:
                 mSongListManager.prevSong();
-                refreshSongInfo();
-                refreshSongBtn();
-                mpv.stop();
                 break;
         }
     }

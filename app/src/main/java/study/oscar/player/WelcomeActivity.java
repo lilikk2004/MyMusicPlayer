@@ -12,7 +12,6 @@ import android.view.animation.Animation;
 import android.widget.ImageView;
 
 import study.oscar.player.manager.SongListManager;
-import study.oscar.player.service.MediaPlayBackService;
 
 /**
  * Created by oscar on 2015/9/14.

@@ -17,7 +17,7 @@
             </intent-filter>
         </activity>
         <activity android:name="study.oscar.player.MainActivity" />
-        <service android:name=".service.MediaPlayBackService" android:enabled="true"/>
+        <service android:name=".service.MusicPlayService" android:enabled="true"/>
         <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     </application>
 
