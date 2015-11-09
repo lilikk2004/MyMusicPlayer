@@ -36,7 +36,7 @@
         android:layout_width="250dp"
         android:layout_height="250dp"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="80dp"
+        android:layout_marginTop="60dp"
         android:layout_below="@+id/textViewSinger"
         app:textSize = "14sp"
         app:textColor = "#80FFFFFF"
@@ -45,31 +45,31 @@
 
     <ImageView
         android:id="@+id/like"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:background="@drawable/icon_like"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="@drawable/desk2_btn_love"
         android:layout_below="@+id/mpv"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="50dp"/>
+        android:layout_marginTop="30dp"/>
 
 
     <Button
         android:id="@+id/next"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:background="@drawable/icon_next"
+        android:layout_width="58dp"
+        android:layout_height="58dp"
+        android:background="@drawable/btn_next_style"
         android:layout_below="@+id/mpv"
         android:layout_alignRight="@+id/mpv"
-        android:layout_marginTop="50dp"/>
+        android:layout_marginTop="19dp"/>
 
 
     <Button
         android:id="@+id/previous"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:background="@drawable/icon_previous"
+        android:layout_width="58dp"
+        android:layout_height="58dp"
+        android:background="@drawable/btn_pre_style"
         android:layout_below="@+id/mpv"
         android:layout_alignLeft="@+id/mpv"
-        android:layout_marginTop="50dp"/>
+        android:layout_marginTop="19dp"/>
 
 </RelativeLayout>
