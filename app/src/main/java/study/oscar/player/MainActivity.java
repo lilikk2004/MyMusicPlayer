@@ -18,7 +18,8 @@ import android.widget.TextView;
 
 import co.mobiwise.library.MusicPlayerView;
 import study.oscar.player.manager.RemoteViewManager;
-import study.oscar.player.service.MusicPlayService;
+import study.oscar.player.manager.SongListManager;
+import study.oscar.player.service.MusicService;
 import study.oscar.player.util.Consts;
 
 public class MainActivity extends Activity implements View.OnClickListener{
@@ -26,7 +27,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
     final static String TAG = "MainActivity";
 
     MusicPlayerView mpv = null;
-    MusicPlayService mPlayService = null;
+    MusicService mPlayService = null;
     RemoteViewManager mRemoteManager = null;
     TextView mTextViewSong = null;
     TextView mTextViewSinger = null;
@@ -53,8 +54,6 @@ public class MainActivity extends Activity implements View.OnClickListener{
         prevBtn.setOnClickListener(this);
 
         mRemoteManager = RemoteViewManager.getInstance(this);
-        refreshSongInfo();
-        refreshSongBtn();
 
         serviceConnection=new ServiceConnection() {
             @Override
@@ -67,10 +66,14 @@ public class MainActivity extends Activity implements View.OnClickListener{
                 if(service == null){
                     return;
                 }
-                mPlayService = ((MusicPlayService.MusicBinder)service).getService();
+                mPlayService = ((MusicService.MusicBinder)service).getService();
+                if(mPlayService != null){
+                    refreshSongInfo();
+                    refreshSongBtn();
+                }
             }
         };
-        Intent intent=new Intent(this,MusicPlayService.class);
+        Intent intent=new Intent(this,MusicService.class);
         bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
         mRemoteManager.initView();
 
@@ -82,9 +85,9 @@ public class MainActivity extends Activity implements View.OnClickListener{
                     return;
                 }
                 if (mpv.isRotating()) {
-                    mPlayService.pauseSong();
+                    mPlayService.pause();
                 } else {
-                    mPlayService.playSong();
+                    mPlayService.play();
                 }
             }
         });
@@ -117,18 +120,19 @@ public class MainActivity extends Activity implements View.OnClickListener{
         filter.addAction(Consts.MY_NEXT_ACTION);
         filter.addAction(Consts.MY_PLAY_ACTION);
         filter.addAction(Consts.MY_PAUSE_ACTION);
+        filter.addAction(Consts.MY_STOP_ACTION);
 
         registerReceiver(mReceiver,filter);
 
     }
 
     void refreshSongInfo(){
-        mpv.setBitmap(mSongListManager.getCurCover());
-        mTextViewSong.setText(mSongListManager.getCurSongName());
-        mTextViewSinger.setText(mSongListManager.getCurSingerName());
+        mpv.setBitmap(mPlayService.getCurCover());
+        mTextViewSong.setText(mPlayService.getCurSongName());
+        mTextViewSinger.setText(mPlayService.getCurSingerName());
 
         mpv.setProgress(0);
-        mpv.setMax(mSongListManager.getCurDuration() / 1000);
+        mpv.setMax(mPlayService.getCurDuration() / 1000);
     }
 
     void refreshSongBtn(){
@@ -172,11 +176,17 @@ public class MainActivity extends Activity implements View.OnClickListener{
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.next:
-                mSongListManager.nextSong();
+                mPlayService.nextSong();
                 break;
             case R.id.previous:
-                mSongListManager.prevSong();
+                mPlayService.preSong();
                 break;
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(mReceiver);
     }
 }

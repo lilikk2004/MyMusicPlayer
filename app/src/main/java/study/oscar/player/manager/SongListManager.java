@@ -24,7 +24,7 @@ public class SongListManager {
     }
 
     int mCurSongIndex = 0;
-    boolean isLoaded = false;
+    boolean mbLoaded = false;
     List<SongItem> songList = new ArrayList<SongItem>();
     String curMusicFolder = FileUtil.getMusicFolder();
 
@@ -61,13 +61,17 @@ public class SongListManager {
             }
         }
 
-        isLoaded = true;
+        mbLoaded = true;
 
         return true;
     }
 
-    public SongItem getSongPath(int index){
-        if(!isLoaded){
+    boolean isLoaded(){
+        return mbLoaded;
+    }
+
+    public SongItem getSong(int index){
+        if(!mbLoaded){
             return null;
         }
 
@@ -79,17 +83,21 @@ public class SongListManager {
     }
 
     public SongItem getCurSong(){
-        return getSongPath(mCurSongIndex);
+        return getSong(mCurSongIndex);
     }
 
-    public void nextSong(){
-        if(mCurSongIndex < songList.size() - 1) mCurSongIndex++;
-        if(mCurSongIndex >= songList.size() - 1 || mCurSongIndex < 0) return;
+    public String getCurSongPath(){
+        return curMusicFolder + getSong(mCurSongIndex).getFileName();
     }
 
-    public void prevSong(){
-        if(mCurSongIndex > 0) mCurSongIndex--;
-        if(mCurSongIndex >= songList.size() - 1 || mCurSongIndex < 0) return;
+    public SongItem nextSong(){
+        if(hasNext()) mCurSongIndex++;
+        return getCurSong();
+    }
+
+    public SongItem prevSong(){
+        if(hasPrev()) mCurSongIndex--;
+        return getCurSong();
     }
 
     public boolean hasNext(){
@@ -102,25 +110,5 @@ public class SongListManager {
         if( songList.size() <= 0) return false;
         if(mCurSongIndex >= songList.size() || mCurSongIndex <= 0) return false;
         return true;
-    }
-
-    public String getCurSongName(){
-        if(mCurSongIndex >= songList.size() - 1 || mCurSongIndex < 0) return "";
-        return getCurSong().getSongName();
-    }
-
-    public String getCurSingerName(){
-        if(mCurSongIndex >= songList.size() - 1 || mCurSongIndex < 0) return "";
-        return getCurSong().getSingerName();
-    }
-
-    public int getCurDuration(){
-        if(mCurSongIndex >= songList.size() - 1 || mCurSongIndex < 0) return 0;
-        return getCurSong().getDuration();
-    }
-
-    public Bitmap getCurCover(){
-        if(mCurSongIndex >= songList.size() - 1 || mCurSongIndex < 0) return null;
-        return getCurSong().getCover();
     }
 }

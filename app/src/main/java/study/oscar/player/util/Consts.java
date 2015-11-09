@@ -6,6 +6,7 @@ package study.oscar.player.util;
 public class Consts {
     final static public String MY_PLAY_ACTION = "MyPlayAction";
     final static public String MY_PAUSE_ACTION = "MyPauseAction";
+    final static public String MY_STOP_ACTION = "MyStopAction";
     final static public String MY_NEXT_ACTION = "MyNextAction";
     final static public String MY_PRE_ACTION = "MyPreAction";
 }
