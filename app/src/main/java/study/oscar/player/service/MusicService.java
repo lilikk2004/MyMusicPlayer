@@ -51,9 +51,9 @@ public class MusicService extends IntentService{
         String action = intent.getStringExtra("action");
         if(action == null) return;
         if(action.equals("pre")){
-            mSongListManager.prevSong();
+            preSong();
         }else if(action.equals("next")){
-            mSongListManager.nextSong();
+            nextSong();
         }else if(action.equals("pause")){
             //SongListManager.getInstance().
         }
