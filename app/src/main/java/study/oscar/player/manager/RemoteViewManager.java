@@ -5,7 +5,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
+import android.support.v4.app.NotificationCompat;
 import android.widget.RemoteViews;
 
 import study.oscar.player.R;
@@ -38,6 +38,7 @@ public class RemoteViewManager {
         RemoteViews remoteViews = new RemoteViews(mContext.getPackageName(),
                 R.layout.statusbar);
         //设置按钮事件
+        NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle();
 
         Intent preIntent = new Intent(mContext,MusicService.class);
         preIntent.putExtra("action", "pre");
@@ -55,10 +56,13 @@ public class RemoteViewManager {
         remoteViews.setOnClickPendingIntent(R.id.statusBar_next, nextPi);//----设置对应的按钮ID监控
 
         Notification.Builder builder = new Notification.Builder(mContext);
-        builder.setContent(remoteViews).setSmallIcon(R.mipmap.ic_launcher)
+        builder.setContent(remoteViews)
+                .setSmallIcon(R.mipmap.ic_launcher)
                 .setOngoing(true)
+                //.setStyle(inboxStyle)
                 .setTicker("music is playing");
         mNotification = builder.build();
+        mNotification.bigContentView = remoteViews;
         mNotifyManager = (NotificationManager)mContext.getSystemService(Context.NOTIFICATION_SERVICE);
         mNotifyManager.notify(1, mNotification);
     }
@@ -68,9 +72,18 @@ public class RemoteViewManager {
             return;
         }
         SongItem item = SongListManager.getInstance().getCurSong();
-        mNotification.contentView.setImageViewBitmap(R.id.remote_icon, item.getCover());
-        mNotification.contentView.setTextViewText(R.id.trackname, item.getSongName());
-        mNotification.contentView.setTextViewText(R.id.artistalbum, item.getSingerName());
+        mNotification.contentView.setImageViewBitmap(R.id.remote_cover, item.getCover());
+        mNotification.contentView.setTextViewText(R.id.remote_song_name, item.getSongName());
+        mNotification.contentView.setTextViewText(R.id.remote_singer_name, item.getSingerName());
         mNotifyManager.notify(1, mNotification);
+    }
+
+    public void cancelAll(){
+        if(mNotification == null || mNotifyManager == null){
+            return;
+        }
+        mNotifyManager.cancelAll();
+        mNotification = null;
+        mNotifyManager = null;
     }
 }

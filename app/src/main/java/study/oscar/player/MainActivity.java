@@ -99,14 +99,17 @@ public class MainActivity extends Activity implements View.OnClickListener{
                 if(Consts.MY_PRE_ACTION.equals(strAction)){
                     refreshSongInfo();
                     refreshSongBtn();
+                    mRemoteManager.refreshSongInfo();
                     mpv.stop();
                 }
                 else if(Consts.MY_NEXT_ACTION.equals(strAction)){
                     refreshSongInfo();
                     refreshSongBtn();
+                    mRemoteManager.refreshSongInfo();
                     mpv.stop();
                 }
                 else if(Consts.MY_PLAY_ACTION.equals(strAction)){
+                    mRemoteManager.refreshSongInfo();
                     mpv.start();
                 }
                 else if(Consts.MY_PAUSE_ACTION.equals(strAction)){
@@ -187,6 +190,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        mRemoteManager.cancelAll();
         unregisterReceiver(mReceiver);
     }
 }
