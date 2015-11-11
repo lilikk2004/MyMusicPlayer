@@ -9,6 +9,7 @@ import android.graphics.Bitmap;
 import android.widget.RemoteViews;
 
 import study.oscar.player.R;
+import study.oscar.player.base.SongItem;
 import study.oscar.player.service.MusicService;
 
 /**
@@ -62,11 +63,14 @@ public class RemoteViewManager {
         mNotifyManager.notify(1, mNotification);
     }
 
-    public void setSongCover(Bitmap bitmap){
+    public void refreshSongInfo(){
         if(mNotification == null || mNotifyManager == null){
             return;
         }
-        mNotification.contentView.setImageViewBitmap(R.id.remote_icon, bitmap);
+        SongItem item = SongListManager.getInstance().getCurSong();
+        mNotification.contentView.setImageViewBitmap(R.id.remote_icon, item.getCover());
+        mNotification.contentView.setTextViewText(R.id.trackname, item.getSongName());
+        mNotification.contentView.setTextViewText(R.id.artistalbum, item.getSingerName());
         mNotifyManager.notify(1, mNotification);
     }
 }
