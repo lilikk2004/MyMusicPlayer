@@ -5,6 +5,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 import android.widget.RemoteViews;
 
@@ -69,6 +70,9 @@ public class RemoteViewManager {
                 .setTicker("music is playing");
         mNotification = builder.build();
         mNotification.bigContentView = remoteViews;
+        if(Build.VERSION.SDK_INT <= 10){
+            mNotification.contentView = remoteViews;
+        }
         mNotifyManager = (NotificationManager)mContext.getSystemService(Context.NOTIFICATION_SERVICE);
         mNotifyManager.notify(1, mNotification);
     }
