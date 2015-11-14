@@ -25,25 +25,23 @@ public class MusicService extends IntentService{
     SongItem mSong;
 
     MediaPlayer mp = null;
+    boolean mbPlaying;
 
     public void seekTo(int i){
         mp.seekTo(i);
     }
 
     public MusicService() {
-        super("MusicService");
-        mp = new MediaPlayer();
-        mSongListManager = SongListManager.getInstance();
-        mSong = mSongListManager.getCurSong();
-        setMediaPath(mSongListManager.getCurSongPath());
+        this("MusicService");
     }
 
     public MusicService(String name){
         super(name);
+        mbPlaying = false;
         mp = new MediaPlayer();
         mSongListManager = SongListManager.getInstance();
         mSong = mSongListManager.getCurSong();
-        setMediaPath(mSongListManager.getCurSongPath());
+        setMediaPath(mSongListManager.getCurSongPath(), false);
     }
 
     @Override
@@ -54,8 +52,12 @@ public class MusicService extends IntentService{
             preSong();
         }else if(action.equals("next")){
             nextSong();
-        }else if(action.equals("pause")){
-            //SongListManager.getInstance().
+        }else if(action.equals("play")){
+            if(mbPlaying){
+                pause();
+            }else {
+                play();
+            }
         }
     }
 
@@ -70,12 +72,18 @@ public class MusicService extends IntentService{
         }
     }
 
-    public boolean setMediaPath(String filePath){
+    public boolean setMediaPath(String filePath,boolean bPlay){
         try {
             mp.stop();
             mp.reset();
             mp.setDataSource(filePath);
             mp.prepare();
+            if (bPlay){
+                mbPlaying = true;
+                play();
+            }else {
+                mbPlaying = false;
+            }
         } catch (IOException e) {
             e.printStackTrace();
             return false;
@@ -89,6 +97,7 @@ public class MusicService extends IntentService{
         Intent playIntent = new Intent();
         playIntent.setAction(Consts.MY_PLAY_ACTION);
         sendBroadcast(playIntent);
+        mbPlaying = true;
     }
 
     public void pause(){
@@ -96,6 +105,7 @@ public class MusicService extends IntentService{
         Intent pauseIntent = new Intent();
         pauseIntent.setAction(Consts.MY_PAUSE_ACTION);
         sendBroadcast(pauseIntent);
+        mbPlaying = false;
     }
 
     public void stop(){
@@ -104,12 +114,13 @@ public class MusicService extends IntentService{
         Intent pauseIntent = new Intent();
         pauseIntent.setAction(Consts.MY_STOP_ACTION);
         sendBroadcast(pauseIntent);
+        mbPlaying = false;
     }
 
     public void preSong(){
         mSongListManager.prevSong();
         mSong = mSongListManager.getCurSong();
-        setMediaPath(mSongListManager.getCurSongPath());
+        setMediaPath(mSongListManager.getCurSongPath(), true);
         Intent preIntent = new Intent();
         preIntent.setAction(Consts.MY_PRE_ACTION);
         sendBroadcast(preIntent);
@@ -118,7 +129,7 @@ public class MusicService extends IntentService{
     public void nextSong(){
         mSongListManager.nextSong();
         mSong = mSongListManager.getCurSong();
-        setMediaPath(mSongListManager.getCurSongPath());
+        setMediaPath(mSongListManager.getCurSongPath(), true);
         Intent nextIntent = new Intent();
         nextIntent.setAction(Consts.MY_NEXT_ACTION);
         sendBroadcast(nextIntent);

@@ -1,22 +1,19 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="100dip"
     android:orientation="horizontal" >
 
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="100dip"
+        android:layout_height="match_parent"
         android:orientation="horizontal">
         <!-- 图标 -->
         <ImageView
-            android:id="@+id/remote_cover"
-            android:layout_width="100dip"
-            android:layout_height="100dip"
-            android:paddingTop="0dip"
-            android:paddingBottom="0dip"
-            android:paddingLeft="4dip"
-            android:paddingRight="4dip" >
+            android:id="@+id/big_remote_cover"
+            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:adjustViewBounds="true" >
         </ImageView>
 
         <LinearLayout
@@ -25,7 +22,7 @@
             android:orientation="vertical" >
             <!-- 音乐名 -->
             <TextView
-                android:id="@+id/remote_song_name"
+                android:id="@+id/big_remote_song"
                 style="@android:style/TextAppearance.StatusBar.EventContent.Title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -38,7 +35,7 @@
                 android:singleLine="true" />
             <!-- 专辑信息，歌手 -->
             <TextView
-                android:id="@+id/remote_singer_name"
+                android:id="@+id/big_remote_singer"
                 style="@android:style/TextAppearance.StatusBar.EventContent"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -55,7 +52,7 @@
                 android:layout_height="match_parent">
                 <!-- 上一首 -->
                 <ImageButton
-                    android:id="@+id/statusBar_prev"
+                    android:id="@+id/big_remote_prev"
                     style="@android:style/MediaButton.Previous"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -63,15 +60,15 @@
                     android:layout_alignParentLeft="true" />
                 <!-- 暂停/播放 -->
                 <ImageButton
-                    android:id="@+id/statusBar_pause"
-                    style="@android:style/MediaButton.Pause"
+                    android:id="@+id/big_remote_play"
+                    style="@android:style/MediaButton.Play"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_centerHorizontal="true" />
                 <!-- 下一首 -->
                 <ImageButton
-                    android:id="@+id/statusBar_next"
+                    android:id="@+id/big_remote_next"
                     style="@android:style/MediaButton.Next"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

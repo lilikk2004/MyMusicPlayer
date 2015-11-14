@@ -99,20 +99,23 @@ public class MainActivity extends Activity implements View.OnClickListener{
                 if(Consts.MY_PRE_ACTION.equals(strAction)){
                     refreshSongInfo();
                     refreshSongBtn();
-                    mRemoteManager.refreshSongInfo();
+                    mRemoteManager.refreshSongInfo(true, true);
                     mpv.stop();
+                    mpv.start();
                 }
                 else if(Consts.MY_NEXT_ACTION.equals(strAction)){
                     refreshSongInfo();
                     refreshSongBtn();
-                    mRemoteManager.refreshSongInfo();
+                    mRemoteManager.refreshSongInfo(true, true);
                     mpv.stop();
+                    mpv.start();
                 }
                 else if(Consts.MY_PLAY_ACTION.equals(strAction)){
-                    mRemoteManager.refreshSongInfo();
+                    mRemoteManager.refreshSongInfo(true, false);
                     mpv.start();
                 }
                 else if(Consts.MY_PAUSE_ACTION.equals(strAction)){
+                    mRemoteManager.refreshSongInfo(false, false);
                     mpv.stop();
                 }
             }

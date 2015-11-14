@@ -1,0 +1,72 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal" >
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <!-- 图标 -->
+        <ImageView
+            android:id="@+id/normal_remote_cover"
+            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:adjustViewBounds="true"
+            android:layout_alignParentLeft="true">
+        </ImageView>
+        <!-- 下一首 -->
+        <ImageButton
+            android:id="@+id/normal_remote_next"
+            style="@android:style/MediaButton.Next"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingRight="4dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"/>
+        <!-- 暂停/播放 -->
+        <ImageButton
+            android:id="@+id/normal_remote_play"
+            style="@android:style/MediaButton.Play"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingRight="4dp"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/normal_remote_next"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_toLeftOf="@+id/normal_remote_play"
+            android:layout_toRightOf="@+id/normal_remote_cover"
+            android:orientation="vertical" >
+            <!-- 音乐名 -->
+            <TextView
+                android:id="@+id/normal_remote_song"
+                style="@android:style/TextAppearance.StatusBar.EventContent.Title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:paddingTop="4dip"
+                android:paddingLeft="4dip"
+                android:textSize="18dip"
+                android:ellipsize="marquee"
+                android:focusable="true"
+                android:singleLine="true" />
+            <!-- 专辑信息，歌手 -->
+            <TextView
+                android:id="@+id/normal_remote_singer"
+                style="@android:style/TextAppearance.StatusBar.EventContent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:paddingTop="4dip"
+                android:paddingLeft="4dip"
+                android:textSize="15dip"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:scrollHorizontally="true" />
+        </LinearLayout>
+    </RelativeLayout>
+
+</LinearLayout>  

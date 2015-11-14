@@ -2,6 +2,7 @@ package study.oscar.player.manager;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Matrix;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -15,6 +16,9 @@ import study.oscar.player.util.FileUtil;
  */
 public class SongListManager {
     final static String TAG = "RemoteViewManager";
+    final static int BIG_REMOTE_COVER_HEIGHT = 200;
+    final static int NORMAL_REMOTE_COVER_HEIGHT = 120;
+
     static SongListManager mInstance = null;
     static public SongListManager getInstance(){
         if(mInstance == null){
@@ -53,7 +57,21 @@ public class SongListManager {
                 int duration = MediaStoreManager.getInstance().getDuration();
                 MediaStoreManager.getInstance().closeCursor();
 
-                songItem.setCover(cover);
+                if(cover != null){
+                    songItem.setCover(cover);
+
+                    float bigRemoteScale = ((float)BIG_REMOTE_COVER_HEIGHT) / cover.getHeight();
+                    Matrix bigMatrix = new Matrix();
+                    bigMatrix.postScale(bigRemoteScale, bigRemoteScale);
+                    Bitmap bigRemoteCover = Bitmap.createBitmap(cover, 0, 0, cover.getWidth(), cover.getHeight(), bigMatrix, true);
+                    songItem.setBigRemoteCover(bigRemoteCover);
+
+                    float normalRemoteScale = ((float)NORMAL_REMOTE_COVER_HEIGHT) / cover.getHeight();
+                    Matrix normalMatrix = new Matrix();
+                    normalMatrix.postScale(normalRemoteScale, normalRemoteScale);
+                    Bitmap normalRemoteCover = Bitmap.createBitmap(cover, 0, 0, cover.getWidth(), cover.getHeight(), normalMatrix, true);
+                    songItem.setNormalRemoteCover(normalRemoteCover);
+                }
                 songItem.setSongName(songName);
                 songItem.setSingerName(singerName);
                 songItem.setDuration(duration);
