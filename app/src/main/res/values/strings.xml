@@ -7,4 +7,6 @@
     <string name="text_play">播放</string>
     <string name="text_pause">暂停</string>
     <string name="text_stop">停止</string>
+    <string name="text_list_name">顺序播放列表(%1$d首)</string>
+    <string name="text_close">关闭</string>
 </resources>

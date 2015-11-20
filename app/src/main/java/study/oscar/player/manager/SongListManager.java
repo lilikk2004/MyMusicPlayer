@@ -104,6 +104,10 @@ public class SongListManager {
         return getSong(mCurSongIndex);
     }
 
+    public int getCount(){
+        return songList.size();
+    }
+
     public String getCurSongPath(){
         return curMusicFolder + getSong(mCurSongIndex).getFileName();
     }
