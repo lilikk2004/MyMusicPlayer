@@ -1,10 +1,14 @@
 package study.oscar.player.adapter;
 
+import android.content.Context;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Adapter;
 import android.widget.BaseAdapter;
+import android.widget.TextView;
 
+import study.oscar.player.R;
+import study.oscar.player.base.SongItem;
 import study.oscar.player.manager.SongListManager;
 
 /**
@@ -13,9 +17,16 @@ import study.oscar.player.manager.SongListManager;
 public class SongListAdapter extends BaseAdapter{
 
     SongListManager songListManager = null;
+    Context mContext;
 
-    SongListAdapter(){
+    public class ViewHolder{
+        TextView songView;
+        TextView singerView;
+    }
+
+    public SongListAdapter(Context context){
         songListManager = SongListManager.getInstance();
+        mContext = context;
     }
 
     @Override
@@ -30,11 +41,31 @@ public class SongListAdapter extends BaseAdapter{
 
     @Override
     public long getItemId(int position) {
-        return 0;
+        return position;
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        return null;
+        ViewHolder viewHolder = null;
+        if(convertView==null){
+            convertView = LayoutInflater.from(mContext).inflate(
+                    R.layout.song_list_item, null);
+
+            viewHolder = new ViewHolder();
+            viewHolder.songView = (TextView)convertView.findViewById(
+                    R.id.item_song_name);
+            viewHolder.singerView = (TextView)convertView.findViewById(
+                    R.id.item_singer_name);
+            convertView.setTag(viewHolder);
+        }else{
+            viewHolder = (ViewHolder)convertView.getTag();
+        }
+
+        SongItem songItem = songListManager.getSong(position);
+
+        viewHolder.songView.setText(songItem.getSongName());
+        viewHolder.singerView.setText(songItem.getSingerName());
+
+        return convertView;
     }
 }

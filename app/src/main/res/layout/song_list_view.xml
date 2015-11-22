@@ -8,6 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="50dp">
         <TextView
+            android:id="@+id/playlist_top_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Play List"
@@ -44,6 +45,7 @@
         android:layout_above="@+id/playlist_bottom_layout"
         />
     <ListView
+        android:id="@+id/playlist_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/playlist_top_line"

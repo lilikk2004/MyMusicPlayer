@@ -14,9 +14,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import co.mobiwise.library.MusicPlayerView;
+import study.oscar.player.adapter.SongListAdapter;
 import study.oscar.player.manager.RemoteViewManager;
 import study.oscar.player.manager.SongListManager;
 import study.oscar.player.service.MusicService;
@@ -38,13 +40,22 @@ public class MainActivity extends Activity implements View.OnClickListener{
 
     BroadcastReceiver mReceiver;
 
+    class singListHolder{
+        TextView titleView;
+        ListView songListView;
+    }
 
+    singListHolder mSongListHolder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        initView();
+        initListener();
+    }
 
+    void initView(){
         mpv = (MusicPlayerView) findViewById(R.id.mpv);
         mTextViewSong = (TextView) findViewById(R.id.textViewSong);
         mTextViewSinger = (TextView) findViewById(R.id.textViewSinger);
@@ -54,7 +65,15 @@ public class MainActivity extends Activity implements View.OnClickListener{
         prevBtn.setOnClickListener(this);
 
         mRemoteManager = RemoteViewManager.getInstance(this);
+        mRemoteManager.initView();
 
+        mSongListHolder = new singListHolder();
+        mSongListHolder.titleView = (TextView) findViewById(R.id.playlist_top_title);
+        mSongListHolder.songListView = (ListView) findViewById(R.id.playlist_list);
+        mSongListHolder.songListView.setAdapter(new SongListAdapter(getApplicationContext()));
+    }
+
+    void initListener(){
         serviceConnection=new ServiceConnection() {
             @Override
             public void onServiceDisconnected(ComponentName name) {
@@ -75,8 +94,6 @@ public class MainActivity extends Activity implements View.OnClickListener{
         };
         Intent intent=new Intent(this,MusicService.class);
         bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
-        mRemoteManager.initView();
-
 
         mpv.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -129,7 +146,6 @@ public class MainActivity extends Activity implements View.OnClickListener{
         filter.addAction(Consts.MY_STOP_ACTION);
 
         registerReceiver(mReceiver,filter);
-
     }
 
     void refreshSongInfo(){
