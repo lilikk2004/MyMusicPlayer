@@ -13,8 +13,10 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import co.mobiwise.library.MusicPlayerView;
@@ -37,12 +39,15 @@ public class MainActivity extends Activity implements View.OnClickListener{
 
     Button nextBtn = null;
     Button prevBtn = null;
+    Button songListBtn = null;
 
     BroadcastReceiver mReceiver;
 
     class singListHolder{
+        RelativeLayout playListLayout;
         TextView titleView;
         ListView songListView;
+        RelativeLayout closeLayout;
     }
 
     singListHolder mSongListHolder;
@@ -61,19 +66,34 @@ public class MainActivity extends Activity implements View.OnClickListener{
         mTextViewSinger = (TextView) findViewById(R.id.textViewSinger);
         nextBtn = (Button) findViewById(R.id.next);
         prevBtn = (Button) findViewById(R.id.previous);
-        nextBtn.setOnClickListener(this);
-        prevBtn.setOnClickListener(this);
+        songListBtn = (Button) findViewById(R.id.show_list);
 
         mRemoteManager = RemoteViewManager.getInstance(this);
         mRemoteManager.initView();
 
         mSongListHolder = new singListHolder();
+
+        mSongListHolder.playListLayout = (RelativeLayout) findViewById(R.id.play_list);
+        mSongListHolder.playListLayout.setVisibility(View.GONE);
         mSongListHolder.titleView = (TextView) findViewById(R.id.playlist_top_title);
         mSongListHolder.songListView = (ListView) findViewById(R.id.playlist_list);
         mSongListHolder.songListView.setAdapter(new SongListAdapter(getApplicationContext()));
+        mSongListHolder.closeLayout = (RelativeLayout) findViewById(R.id.playlist_bottom_layout);
     }
 
     void initListener(){
+        nextBtn.setOnClickListener(this);
+        prevBtn.setOnClickListener(this);
+        songListBtn.setOnClickListener(this);
+        mpv.setOnClickListener(this);
+        mSongListHolder.closeLayout.setOnClickListener(this);
+        mSongListHolder.songListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                mPlayService.switchSong(position);
+            }
+        });
+
         serviceConnection=new ServiceConnection() {
             @Override
             public void onServiceDisconnected(ComponentName name) {
@@ -95,32 +115,11 @@ public class MainActivity extends Activity implements View.OnClickListener{
         Intent intent=new Intent(this,MusicService.class);
         bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
 
-        mpv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(mPlayService == null){
-                    return;
-                }
-                if (mpv.isRotating()) {
-                    mPlayService.pause();
-                } else {
-                    mPlayService.play();
-                }
-            }
-        });
-
         mReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 String strAction = intent.getAction();
-                if(Consts.MY_PRE_ACTION.equals(strAction)){
-                    refreshSongInfo();
-                    refreshSongBtn();
-                    mRemoteManager.refreshSongInfo(true, true);
-                    mpv.stop();
-                    mpv.start();
-                }
-                else if(Consts.MY_NEXT_ACTION.equals(strAction)){
+                if(Consts.MY_SWITCH_ACTION.equals(strAction)){
                     refreshSongInfo();
                     refreshSongBtn();
                     mRemoteManager.refreshSongInfo(true, true);
@@ -139,8 +138,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
         };
 
         IntentFilter filter = new IntentFilter();
-        filter.addAction(Consts.MY_PRE_ACTION);
-        filter.addAction(Consts.MY_NEXT_ACTION);
+        filter.addAction(Consts.MY_SWITCH_ACTION);
         filter.addAction(Consts.MY_PLAY_ACTION);
         filter.addAction(Consts.MY_PAUSE_ACTION);
         filter.addAction(Consts.MY_STOP_ACTION);
@@ -203,6 +201,21 @@ public class MainActivity extends Activity implements View.OnClickListener{
             case R.id.previous:
                 mPlayService.preSong();
                 break;
+            case R.id.show_list:
+                mSongListHolder.playListLayout.setVisibility(View.VISIBLE);
+                break;
+            case R.id.mpv:
+                if(mPlayService == null){
+                    return;
+                }
+                if (mpv.isRotating()) {
+                    mPlayService.pause();
+                } else {
+                    mPlayService.play();
+                }
+                break;
+            case R.id.playlist_bottom_layout:
+                mSongListHolder.playListLayout.setVisibility(View.GONE);
         }
     }
 

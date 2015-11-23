@@ -118,21 +118,27 @@ public class MusicService extends IntentService{
     }
 
     public void preSong(){
-        mSongListManager.prevSong();
-        mSong = mSongListManager.getCurSong();
+        mSong = mSongListManager.prevSong();
         setMediaPath(mSongListManager.getCurSongPath(), true);
-        Intent preIntent = new Intent();
-        preIntent.setAction(Consts.MY_PRE_ACTION);
-        sendBroadcast(preIntent);
+        Intent switchIntent = new Intent();
+        switchIntent.setAction(Consts.MY_SWITCH_ACTION);
+        sendBroadcast(switchIntent);
     }
 
     public void nextSong(){
-        mSongListManager.nextSong();
-        mSong = mSongListManager.getCurSong();
+        mSong = mSongListManager.nextSong();
         setMediaPath(mSongListManager.getCurSongPath(), true);
-        Intent nextIntent = new Intent();
-        nextIntent.setAction(Consts.MY_NEXT_ACTION);
-        sendBroadcast(nextIntent);
+        Intent switchIntent = new Intent();
+        switchIntent.setAction(Consts.MY_SWITCH_ACTION);
+        sendBroadcast(switchIntent);
+    }
+
+    public void switchSong(int index){
+        mSong = mSongListManager.switchSong(index);
+        setMediaPath(mSongListManager.getCurSongPath(), true);
+        Intent switchIntent = new Intent();
+        switchIntent.setAction(Consts.MY_SWITCH_ACTION);
+        sendBroadcast(switchIntent);
     }
 
     public String getCurSongName(){

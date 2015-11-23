@@ -133,4 +133,15 @@ public class SongListManager {
         if(mCurSongIndex >= songList.size() || mCurSongIndex <= 0) return false;
         return true;
     }
+
+    public SongItem switchSong(int index){
+        if( songList.size() <= 0){
+            return null;
+        }
+        if(index < 0 || index >= songList.size()){
+            return null;
+        }
+        mCurSongIndex = index;
+        return getCurSong();
+    }
 }
