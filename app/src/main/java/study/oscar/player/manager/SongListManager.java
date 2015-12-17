@@ -104,6 +104,10 @@ public class SongListManager {
         return getSong(mCurSongIndex);
     }
 
+    public int getCurSongIndex(){
+        return mCurSongIndex;
+    }
+
     public int getCount(){
         return songList.size();
     }

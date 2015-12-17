@@ -13,6 +13,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
@@ -36,12 +38,15 @@ public class MainActivity extends Activity implements View.OnClickListener{
     TextView mTextViewSong = null;
     TextView mTextViewSinger = null;
     ServiceConnection serviceConnection;
+    SongListAdapter mAdapter;
 
     Button nextBtn = null;
     Button prevBtn = null;
     Button songListBtn = null;
 
     BroadcastReceiver mReceiver;
+
+    boolean mbShowingAni = false;
 
     class singListHolder{
         RelativeLayout playListLayout;
@@ -71,13 +76,14 @@ public class MainActivity extends Activity implements View.OnClickListener{
         mRemoteManager = RemoteViewManager.getInstance(this);
         mRemoteManager.initView();
 
-        mSongListHolder = new singListHolder();
+        mAdapter = new SongListAdapter(getApplicationContext());
 
+        mSongListHolder = new singListHolder();
         mSongListHolder.playListLayout = (RelativeLayout) findViewById(R.id.play_list);
         mSongListHolder.playListLayout.setVisibility(View.GONE);
         mSongListHolder.titleView = (TextView) findViewById(R.id.playlist_top_title);
         mSongListHolder.songListView = (ListView) findViewById(R.id.playlist_list);
-        mSongListHolder.songListView.setAdapter(new SongListAdapter(getApplicationContext()));
+        mSongListHolder.songListView.setAdapter(mAdapter);
         mSongListHolder.closeLayout = (RelativeLayout) findViewById(R.id.playlist_bottom_layout);
     }
 
@@ -91,6 +97,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 mPlayService.switchSong(position);
+                mAdapter.notifyDataSetChanged();
             }
         });
 
@@ -201,9 +208,14 @@ public class MainActivity extends Activity implements View.OnClickListener{
             case R.id.previous:
                 mPlayService.preSong();
                 break;
-            case R.id.show_list:
+            case R.id.show_list:{
+                int listHeight = mSongListHolder.playListLayout.getHeight();
+                Animation animation = new TranslateAnimation(0, 0, listHeight, 0);
+                animation.setDuration(300);
                 mSongListHolder.playListLayout.setVisibility(View.VISIBLE);
+                mSongListHolder.playListLayout.startAnimation(animation);
                 break;
+            }
             case R.id.mpv:
                 if(mPlayService == null){
                     return;
@@ -214,8 +226,29 @@ public class MainActivity extends Activity implements View.OnClickListener{
                     mPlayService.play();
                 }
                 break;
-            case R.id.playlist_bottom_layout:
-                mSongListHolder.playListLayout.setVisibility(View.GONE);
+            case R.id.playlist_bottom_layout: {
+                int listHeight = mSongListHolder.playListLayout.getHeight();
+                Animation animation = new TranslateAnimation(0, 0, 0, listHeight);
+                animation.setDuration(300);
+                animation.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+                        mbShowingAni = true;
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        mbShowingAni = false;
+                        mSongListHolder.playListLayout.setVisibility(View.GONE);
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+
+                    }
+                });
+                mSongListHolder.playListLayout.startAnimation(animation);
+            }
         }
     }
 

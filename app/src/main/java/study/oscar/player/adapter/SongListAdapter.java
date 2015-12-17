@@ -66,6 +66,14 @@ public class SongListAdapter extends BaseAdapter{
         viewHolder.songView.setText(songItem.getSongName());
         viewHolder.singerView.setText(songItem.getSingerName());
 
+        if(position == songListManager.getCurSongIndex()){
+            viewHolder.songView.setTextColor(0xFF00C18d);
+            viewHolder.singerView.setTextColor(0xFF00815e);
+        }else{
+            viewHolder.songView.setTextColor(0xFFFFFFFF);
+            viewHolder.singerView.setTextColor(0xFFDDDDDD);
+        }
+
         return convertView;
     }
 }
