@@ -3,6 +3,7 @@ package study.oscar.player.manager;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
+import android.util.Log;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -15,7 +16,7 @@ import study.oscar.player.util.FileUtil;
  * Created by oscar on 2015/11/8.
  */
 public class SongListManager {
-    final static String TAG = "RemoteViewManager";
+    final static String TAG = "SongListManager";
     final static int BIG_REMOTE_COVER_HEIGHT = 200;
     final static int NORMAL_REMOTE_COVER_HEIGHT = 120;
 
@@ -49,6 +50,8 @@ public class SongListManager {
                 SongItem songItem = new SongItem();
                 // 判断是否为MP4结尾
                 songItem.setFileName(filename);
+
+                Log.d(TAG, "getFolderPath() + filename:" + getFolderPath() + filename);
 
                 MediaStoreManager.getInstance().setCursor(getFolderPath() + filename, context);
                 Bitmap cover = MediaStoreManager.getInstance().getBitmap(context);
@@ -147,5 +150,9 @@ public class SongListManager {
         }
         mCurSongIndex = index;
         return getCurSong();
+    }
+
+    public List<SongItem> getSongList(){
+        return songList;
     }
 }

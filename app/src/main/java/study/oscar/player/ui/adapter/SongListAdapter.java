@@ -1,4 +1,4 @@
-package study.oscar.player.adapter;
+package study.oscar.player.ui.adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;

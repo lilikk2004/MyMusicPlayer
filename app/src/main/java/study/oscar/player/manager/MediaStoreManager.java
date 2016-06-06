@@ -6,11 +6,13 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.util.Log;
 
 /**
  * Created by oscar on 2015/9/12.
  */
 public class MediaStoreManager {
+    final static String TAG = "MediaStoreManager";
     static MediaStoreManager mInstance = null;
     static public MediaStoreManager getInstance(){
         if(mInstance == null){
@@ -40,6 +42,7 @@ public class MediaStoreManager {
                 // 通过Cursor 获取路径，如果路径相同则break；
                 path = c.getString(c
                         .getColumnIndexOrThrow(MediaStore.Audio.Media.DATA));
+                Log.d(TAG, "path:" + path);
                 // 查找到相同的路径则返回，此时cursorPosition 便是指向路径所指向的Cursor 便可以返回了
                 if (path.equals(filePath)) {
                     // System.out.println("audioPath = " + path);

@@ -8,7 +8,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="study.oscar.player.WelcomeActivity"
+            android:name=".ui.activity.WelcomeActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -16,9 +16,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="study.oscar.player.MainActivity" />
+        <activity android:name=".ui.activity.MainActivity" android:configChanges="orientation|keyboard|keyboardHidden|screenSize"/>
         <service android:name=".service.MusicService" android:enabled="true"/>
-        <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     </application>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CHANGE_CONFIGURATION"></uses-permission>
 
 </manifest>

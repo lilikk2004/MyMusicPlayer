@@ -1,4 +1,4 @@
-package study.oscar.player;
+package study.oscar.player.ui.activity;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -9,6 +9,7 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,31 +23,37 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import co.mobiwise.library.MusicPlayerView;
-import study.oscar.player.adapter.SongListAdapter;
+import study.oscar.player.R;
 import study.oscar.player.manager.RemoteViewManager;
 import study.oscar.player.manager.SongListManager;
 import study.oscar.player.service.MusicService;
+import study.oscar.player.ui.adapter.CoverPagerAdapter;
+import study.oscar.player.ui.adapter.SongListAdapter;
 import study.oscar.player.util.Consts;
 
 public class MainActivity extends Activity implements View.OnClickListener{
 
-    final static String TAG = "MainActivity";
+    private final static String TAG = "MainActivity";
 
-    MusicPlayerView mpv = null;
-    MusicService mPlayService = null;
-    RemoteViewManager mRemoteManager = null;
-    TextView mTextViewSong = null;
-    TextView mTextViewSinger = null;
-    ServiceConnection serviceConnection;
-    SongListAdapter mAdapter;
+    private MusicPlayerView mpv = null;
+    private MusicService mPlayService = null;
+    private RemoteViewManager mRemoteManager = null;
+    private TextView mTextViewSong = null;
+    private TextView mTextViewSinger = null;
+    private ServiceConnection serviceConnection;
+    private SongListAdapter mAdapter;
 
-    Button nextBtn = null;
-    Button prevBtn = null;
-    Button songListBtn = null;
+    private Button nextBtn = null;
+    private Button prevBtn = null;
+    private Button songListBtn = null;
 
-    BroadcastReceiver mReceiver;
+    private ViewPager mCoverViewPager = null;
+    private CoverPagerAdapter coverPagerAdapter = null;
 
-    boolean mbShowingAni = false;
+
+    private BroadcastReceiver mReceiver;
+
+    private boolean mbShowingAni = false;
 
     class singListHolder{
         RelativeLayout playListLayout;
@@ -60,9 +67,11 @@ public class MainActivity extends Activity implements View.OnClickListener{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "onCreate");
         setContentView(R.layout.activity_main);
         initView();
         initListener();
+        initReceiver();
     }
 
     void initView(){
@@ -85,6 +94,10 @@ public class MainActivity extends Activity implements View.OnClickListener{
         mSongListHolder.songListView = (ListView) findViewById(R.id.playlist_list);
         mSongListHolder.songListView.setAdapter(mAdapter);
         mSongListHolder.closeLayout = (RelativeLayout) findViewById(R.id.playlist_bottom_layout);
+
+        mCoverViewPager = (ViewPager)findViewById(R.id.coverViewPager);
+        coverPagerAdapter = new CoverPagerAdapter(this);
+        mCoverViewPager.setAdapter(coverPagerAdapter);
     }
 
     void initListener(){
@@ -121,7 +134,9 @@ public class MainActivity extends Activity implements View.OnClickListener{
         };
         Intent intent=new Intent(this,MusicService.class);
         bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
+    }
 
+    void initReceiver(){
         mReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -130,8 +145,8 @@ public class MainActivity extends Activity implements View.OnClickListener{
                     refreshSongInfo();
                     refreshSongBtn();
                     mRemoteManager.refreshSongInfo(true, true);
-                    mpv.stop();
-                    mpv.start();
+                    //mpv.invalidate();
+                    //mpv.start();
                 }
                 else if(Consts.MY_PLAY_ACTION.equals(strAction)){
                     mRemoteManager.refreshSongInfo(true, false);
@@ -257,5 +272,21 @@ public class MainActivity extends Activity implements View.OnClickListener{
         super.onDestroy();
         mRemoteManager.cancelAll();
         unregisterReceiver(mReceiver);
+        unbindService(serviceConnection);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
     }
 }

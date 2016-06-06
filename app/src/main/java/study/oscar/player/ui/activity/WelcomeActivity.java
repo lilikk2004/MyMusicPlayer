@@ -1,4 +1,4 @@
-package study.oscar.player;
+package study.oscar.player.ui.activity;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -11,6 +11,7 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.ImageView;
 
+import study.oscar.player.R;
 import study.oscar.player.manager.SongListManager;
 
 /**
