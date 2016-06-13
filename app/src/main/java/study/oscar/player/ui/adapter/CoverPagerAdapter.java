@@ -1,8 +1,8 @@
 package study.oscar.player.ui.adapter;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.support.v4.view.PagerAdapter;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -17,9 +17,10 @@ import study.oscar.player.ui.control.CoverImg;
  * Created by oscar on 2016/5/7.
  */
 public class CoverPagerAdapter extends PagerAdapter {
+    final static public String TAG = "CoverPagerAdapter";
 
     SongListManager songListManager = null;
-    private List<View> coverViewList = new ArrayList<View>();//view数组
+    private List<CoverImg> coverViewList = new ArrayList<CoverImg>();//view数组
     Context mContext;
 
     public CoverPagerAdapter(Context context){
@@ -27,9 +28,8 @@ public class CoverPagerAdapter extends PagerAdapter {
         mContext = context;
 
         for(SongItem song:songListManager.getSongList()){
-            Bitmap coverBitmap = song.getCover();
             CoverImg coverImg = new CoverImg(mContext);
-            coverImg.setCoverImage(coverBitmap);
+            coverImg.setSongItem(song);
             coverViewList.add(coverImg);
         }
     }
@@ -56,6 +56,14 @@ public class CoverPagerAdapter extends PagerAdapter {
     @Override
     public Object instantiateItem(ViewGroup container, int position) {  //这个方法用来实例化页卡
         container.addView(coverViewList.get(position), 0);//添加页卡
+        return coverViewList.get(position);
+    }
+
+    public CoverImg getCoverItem(int position){
+        if(position >= coverViewList.size()){
+            Log.d(TAG, "Out of index");
+            return null;
+        }
         return coverViewList.get(position);
     }
 }

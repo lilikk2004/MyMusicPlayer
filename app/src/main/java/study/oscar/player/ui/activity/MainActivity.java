@@ -8,8 +8,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
-import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -29,6 +29,7 @@ import study.oscar.player.manager.SongListManager;
 import study.oscar.player.service.MusicService;
 import study.oscar.player.ui.adapter.CoverPagerAdapter;
 import study.oscar.player.ui.adapter.SongListAdapter;
+import study.oscar.player.ui.control.CoverViewPager;
 import study.oscar.player.util.Consts;
 
 public class MainActivity extends Activity implements View.OnClickListener{
@@ -47,12 +48,11 @@ public class MainActivity extends Activity implements View.OnClickListener{
     private Button prevBtn = null;
     private Button songListBtn = null;
 
-    private ViewPager mCoverViewPager = null;
+    private CoverViewPager mCoverViewPager = null;
     private CoverPagerAdapter coverPagerAdapter = null;
 
 
     private BroadcastReceiver mReceiver;
-
     private boolean mbShowingAni = false;
 
     class singListHolder{
@@ -95,10 +95,36 @@ public class MainActivity extends Activity implements View.OnClickListener{
         mSongListHolder.songListView.setAdapter(mAdapter);
         mSongListHolder.closeLayout = (RelativeLayout) findViewById(R.id.playlist_bottom_layout);
 
-        mCoverViewPager = (ViewPager)findViewById(R.id.coverViewPager);
+        mCoverViewPager = (CoverViewPager)findViewById(R.id.coverViewPager);
         coverPagerAdapter = new CoverPagerAdapter(this);
         mCoverViewPager.setAdapter(coverPagerAdapter);
+
+        mHandlerRotate.postDelayed(mRunnableRotate, ROTATE_DELAY);
     }
+
+    boolean isRotating = true;
+
+    /**
+     * Handler will post runnable object every @ROTATE_DELAY seconds.
+     */
+    private static int ROTATE_DELAY = 10;
+    /**
+     * Handler for posting runnable object
+     */
+    private Handler mHandlerRotate = new Handler();
+
+    /**
+     * Runnable for turning image (default velocity is 10)
+     */
+    private Runnable mRunnableRotate = new Runnable() {
+        @Override
+        public void run() {
+            if (isRotating) {
+                mCoverViewPager.updateCurrentCoverRotate();
+                mHandlerRotate.postDelayed(mRunnableRotate, ROTATE_DELAY);
+            }
+        }
+    };
 
     void initListener(){
         nextBtn.setOnClickListener(this);
