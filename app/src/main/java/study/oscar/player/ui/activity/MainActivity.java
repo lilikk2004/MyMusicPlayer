@@ -10,6 +10,7 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -99,8 +100,40 @@ public class MainActivity extends Activity implements View.OnClickListener{
         coverPagerAdapter = new CoverPagerAdapter(this);
         mCoverViewPager.setAdapter(coverPagerAdapter);
 
+        mCoverViewPager.addOnPageChangeListener(pageChangeListener);
+
         mHandlerRotate.postDelayed(mRunnableRotate, ROTATE_DELAY);
     }
+
+    ViewPager.OnPageChangeListener pageChangeListener = new ViewPager.OnPageChangeListener(){
+
+        @Override
+        public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+        }
+
+        @Override
+        public void onPageSelected(int position) {
+
+        }
+
+        @Override
+        public void onPageScrollStateChanged(int state) {
+            Log.d(TAG, "onPageScrollStateChanged:" + state);
+            switch (state){
+                case ViewPager.SCROLL_STATE_IDLE:
+                    if(!isRotating){
+                        mHandlerRotate.postDelayed(mRunnableRotate, ROTATE_DELAY);
+                    }
+                    isRotating = true;
+                    break;
+                case ViewPager.SCROLL_STATE_DRAGGING:
+                case ViewPager.SCROLL_STATE_SETTLING:
+                    isRotating = false;
+                    break;
+            }
+        }
+    };
 
     boolean isRotating = true;
 
