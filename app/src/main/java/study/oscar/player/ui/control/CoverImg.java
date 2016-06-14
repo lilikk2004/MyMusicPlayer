@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.AttributeSet;
@@ -18,14 +19,10 @@ import study.oscar.player.base.SongItem;
  */
 public class CoverImg extends View {
     final static public String TAG = "CoverImg";
-    Bitmap mCoverImage = null;
-    Bitmap mPlay_disc = null;
+    Bitmap mPlayImage = null;
     SongItem songItem;
-
-    Rect coverSrcRect = null;
-    Rect coverDrawRect = null;
-    Rect playSrcRect = null;
-    Rect playDrawRect = null;
+    int mDrawX;
+    int mDrawY;
 
     public SongItem getSongItem() {
         return songItem;
@@ -36,20 +33,10 @@ public class CoverImg extends View {
     }
 
 
-    /**
-     * mRotateDegrees count increase 1 by 1 default.
-     * I used that parameter as velocity.
-     */
-    private static int VELOCITY = 1;
-
-    /**
-     * Cover image is rotating. That is why we hold that value.
-     */
+    private static final int VELOCITY = 1;
     private int mRotateDegrees = 0;
+    private static final int SLOW = 2;
 
-    /**
-     * Center values for cover image.
-     */
     private float mCenterX;
     private float mCenterY;
     private boolean mbMeasured = false;
@@ -71,44 +58,53 @@ public class CoverImg extends View {
         int height = getHeight();
         mCenterX = width / 2;
         mCenterY = height / 2;
-        int imageLength
+
+        int playLength;
         if(width > height){
-            playDrawRect = new Rect((width - height) / 2, 0, (width + height) / 2, height);
-            imageLength = height * 2 / 3;
-            coverDrawRect = new Rect((width - imageLength) / 2,
-                    (height - imageLength) / 2,
-                    (width + imageLength) / 2,
-                    (height + imageLength) / 2);
+            playLength = height;
+            mDrawX = (width - height) / 2;
+            mDrawY = 0;
         }else{
-            playDrawRect = new Rect(0, (height - width) / 2, width, (height + width) / 2);
-            imageLength = width * 2 / 3;
-            coverDrawRect = new Rect((width - imageLength) / 2,
-                    (height - imageLength) / 2,
-                    (width + imageLength) / 2,
-                    (height + imageLength) / 2);
+            playLength = width;
+            mDrawX = 0;
+            mDrawY = (height - width) / 2;
         }
+
+        Rect playDrawRect = new Rect(0, 0, playLength, playLength);
+        Rect imgDrawRect = new Rect(playLength / 6, playLength / 6, playLength * 5 / 6, playLength * 5 / 6);
 
         Bitmap cover = songItem.getCover();
 
         int bitWidth = cover.getWidth();
         int bitHeight = cover.getHeight();
 
-        int srcX,srcY,srcW,srcH;
+        Rect imgSrcRect;
         if(bitHeight > bitWidth){
-            srcX = 0;
-            srcY = (bitHeight - bitWidth) / 2;
-            srcW = bitWidth;
-            srcH = bitWidth;
+            imgSrcRect = new Rect(0, (bitHeight - bitWidth) / 2, bitWidth, (bitHeight + bitWidth) / 2);
         }else{
-            srcX = (bitWidth - bitHeight) / 2;
-            srcY = 0;
-            srcW = bitHeight;
-            srcH = bitHeight;
+            imgSrcRect = new Rect((bitWidth - bitHeight) / 2, 0, (bitWidth + bitHeight) / 2, bitHeight);
         }
-        mPlay_disc = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.play_disc);
-        playSrcRect = new Rect(0 , 0, mPlay_disc.getWidth(), mPlay_disc.getHeight());
+        Bitmap play_disc = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.play_disc);
 
-        Bitmap bitmap = Bitmap.createBitmap(cover, srcX, srcY, srcW ,srcH);
+        Rect playSrc = new Rect(0, 0, play_disc.getWidth(), play_disc.getHeight());
+
+        mPlayImage = Bitmap.createBitmap(playLength, playLength, Bitmap.Config.ARGB_8888);
+
+        final Paint paint = new Paint();
+        //paint.setAntiAlias(true);
+        Canvas imgCanvas = new Canvas(mPlayImage);
+
+        imgCanvas.drawBitmap(cover, imgSrcRect, imgDrawRect, paint);
+        imgCanvas.drawBitmap(play_disc, playSrc, playDrawRect, paint);
+
+/*        float scaleSize = (float)(1.0) * imageLength / srcW;
+        Matrix matrix = new Matrix();
+        matrix.postScale(scaleSize, scaleSize);
+
+        mCoverImage = Bitmap.createBitmap(bitmap,0,0,srcW,
+                srcH,matrix,true);
+
+        coverSrcRect = new Rect(0 , 0, mCoverImage.getWidth(), mCoverImage.getHeight());*/
     }
 
 
@@ -122,22 +118,22 @@ public class CoverImg extends View {
             mbMeasured = false;
         }
 
-        if(mCoverImage == null || mPlay_disc == null){
+        if(mPlayImage == null){
             return;
         }
 
         final Paint paint = new Paint();
-        paint.setAntiAlias(true);
+        //paint.setAntiAlias(true);
 
-        canvas.rotate(mRotateDegrees, mCenterX, mCenterY);
-        canvas.drawBitmap(mCoverImage, coverSrcRect, coverDrawRect, paint);
-        canvas.drawBitmap(mPlay_disc, playSrcRect, playDrawRect, paint);
+        canvas.rotate(mRotateDegrees * (float)1.0 / SLOW, mCenterX, mCenterY);
+        canvas.drawBitmap(mPlayImage, mDrawX, mDrawY, paint);
+        //canvas.drawBitmap(mPlay_disc, playSrcRect, playDrawRect, paint);
 
     }
 
     public void updateCoverRotate() {
         mRotateDegrees += VELOCITY;
-        mRotateDegrees = mRotateDegrees % 360;
+        mRotateDegrees = mRotateDegrees % ( 360 * SLOW);
         postInvalidate();
     }
 

@@ -107,7 +107,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
     /**
      * Handler will post runnable object every @ROTATE_DELAY seconds.
      */
-    private static int ROTATE_DELAY = 10;
+    private static int ROTATE_DELAY = 20;
     /**
      * Handler for posting runnable object
      */
