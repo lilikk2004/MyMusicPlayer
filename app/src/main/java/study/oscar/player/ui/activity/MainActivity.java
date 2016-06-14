@@ -102,7 +102,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
 
         mCoverViewPager.addOnPageChangeListener(pageChangeListener);
 
-        mHandlerRotate.postDelayed(mRunnableRotate, ROTATE_DELAY);
+        mHandler.postDelayed(mRunnableRotate, ROTATE_DELAY);
     }
 
     ViewPager.OnPageChangeListener pageChangeListener = new ViewPager.OnPageChangeListener(){
@@ -114,7 +114,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
 
         @Override
         public void onPageSelected(int position) {
-
+            mPlayService.switchSong(position);
         }
 
         @Override
@@ -123,7 +123,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
             switch (state){
                 case ViewPager.SCROLL_STATE_IDLE:
                     if(!isRotating){
-                        mHandlerRotate.postDelayed(mRunnableRotate, ROTATE_DELAY);
+                        mHandler.postDelayed(mRunnableRotate, ROTATE_DELAY);
                     }
                     isRotating = true;
                     break;
@@ -144,17 +144,14 @@ public class MainActivity extends Activity implements View.OnClickListener{
     /**
      * Handler for posting runnable object
      */
-    private Handler mHandlerRotate = new Handler();
+    private Handler mHandler = new Handler();
 
-    /**
-     * Runnable for turning image (default velocity is 10)
-     */
     private Runnable mRunnableRotate = new Runnable() {
         @Override
         public void run() {
             if (isRotating) {
                 mCoverViewPager.updateCurrentCoverRotate();
-                mHandlerRotate.postDelayed(mRunnableRotate, ROTATE_DELAY);
+                mHandler.postDelayed(mRunnableRotate, ROTATE_DELAY);
             }
         }
     };

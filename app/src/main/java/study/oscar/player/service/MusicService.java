@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.media.MediaPlayer;
 import android.os.Binder;
+import android.os.Handler;
 import android.os.IBinder;
 
 import java.io.IOException;
@@ -119,26 +120,29 @@ public class MusicService extends IntentService{
 
     public void preSong(){
         mSong = mSongListManager.prevSong();
-        setMediaPath(mSongListManager.getCurSongPath(), true);
-        Intent switchIntent = new Intent();
-        switchIntent.setAction(Consts.MY_SWITCH_ACTION);
-        sendBroadcast(switchIntent);
+        asyncSetPath();
     }
 
     public void nextSong(){
         mSong = mSongListManager.nextSong();
-        setMediaPath(mSongListManager.getCurSongPath(), true);
-        Intent switchIntent = new Intent();
-        switchIntent.setAction(Consts.MY_SWITCH_ACTION);
-        sendBroadcast(switchIntent);
+        asyncSetPath();
     }
 
     public void switchSong(int index){
         mSong = mSongListManager.switchSong(index);
-        setMediaPath(mSongListManager.getCurSongPath(), true);
-        Intent switchIntent = new Intent();
-        switchIntent.setAction(Consts.MY_SWITCH_ACTION);
-        sendBroadcast(switchIntent);
+        asyncSetPath();
+    }
+
+    void asyncSetPath(){
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                setMediaPath(mSongListManager.getCurSongPath(), true);
+                Intent switchIntent = new Intent();
+                switchIntent.setAction(Consts.MY_SWITCH_ACTION);
+                sendBroadcast(switchIntent);
+            }
+        }, 10);
     }
 
     public String getCurSongName(){
