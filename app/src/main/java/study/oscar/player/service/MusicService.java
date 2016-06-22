@@ -5,8 +5,11 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.media.MediaPlayer;
 import android.os.Binder;
-import android.os.Handler;
 import android.os.IBinder;
+import android.renderscript.Allocation;
+import android.renderscript.Element;
+import android.renderscript.RenderScript;
+import android.renderscript.ScriptIntrinsicBlur;
 
 import java.io.IOException;
 
@@ -27,6 +30,7 @@ public class MusicService extends IntentService{
 
     MediaPlayer mp = null;
     boolean mbPlaying;
+    public static final Object musicLock = new Object();
 
     public void seekTo(int i){
         mp.seekTo(i);
@@ -75,14 +79,16 @@ public class MusicService extends IntentService{
 
     public boolean setMediaPath(String filePath,boolean bPlay){
         try {
-            mp.stop();
-            mp.reset();
-            mp.setDataSource(filePath);
-            mp.prepare();
-            if (bPlay){
+            synchronized(musicLock) {
+                mp.stop();
+                mp.reset();
+                mp.setDataSource(filePath);
+                mp.prepare();
+            }
+            if (bPlay) {
                 mbPlaying = true;
                 play();
-            }else {
+            } else {
                 mbPlaying = false;
             }
         } catch (IOException e) {
@@ -94,7 +100,9 @@ public class MusicService extends IntentService{
     }
 
     public void play(){
-        mp.start();
+        synchronized(musicLock) {
+            mp.start();
+        }
         Intent playIntent = new Intent();
         playIntent.setAction(Consts.MY_PLAY_ACTION);
         sendBroadcast(playIntent);
@@ -120,21 +128,21 @@ public class MusicService extends IntentService{
 
     public void preSong(){
         mSong = mSongListManager.prevSong();
-        asyncSetPath();
+        startSetPathThread();
     }
 
     public void nextSong(){
         mSong = mSongListManager.nextSong();
-        asyncSetPath();
+        startSetPathThread();
     }
 
     public void switchSong(int index){
         mSong = mSongListManager.switchSong(index);
-        asyncSetPath();
+        startSetPathThread();
     }
 
-    void asyncSetPath(){
-        new Handler().postDelayed(new Runnable() {
+    void startSetPathThread(){
+        new Thread(new Runnable() {
             @Override
             public void run() {
                 setMediaPath(mSongListManager.getCurSongPath(), true);
@@ -142,7 +150,7 @@ public class MusicService extends IntentService{
                 switchIntent.setAction(Consts.MY_SWITCH_ACTION);
                 sendBroadcast(switchIntent);
             }
-        }, 10);
+        }).start();
     }
 
     public String getCurSongName(){
@@ -171,5 +179,10 @@ public class MusicService extends IntentService{
             return null;
         }
         return mSong.getCover();
+    }
+
+    public Bitmap getCurBlurCover(){
+
+        return blurBitmap(getCurCover());
     }
 }

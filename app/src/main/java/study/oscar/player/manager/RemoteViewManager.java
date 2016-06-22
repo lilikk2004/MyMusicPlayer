@@ -128,7 +128,12 @@ public class RemoteViewManager {
             mNotification.contentView.setTextViewText(R.id.normal_remote_song, item.getSongName());
             mNotification.contentView.setTextViewText(R.id.normal_remote_singer, item.getSingerName());
         }
-        mNotifyManager.notify(1, mNotification);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                mNotifyManager.notify(1, mNotification);
+            }
+        }).start();
     }
 
     public void cancelAll(){

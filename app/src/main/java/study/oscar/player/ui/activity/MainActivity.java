@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -51,6 +52,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
 
     private CoverViewPager mCoverViewPager = null;
     private CoverPagerAdapter coverPagerAdapter = null;
+    private RelativeLayout mBackgroundLayout;
 
 
     private BroadcastReceiver mReceiver;
@@ -82,6 +84,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
         nextBtn = (Button) findViewById(R.id.next);
         prevBtn = (Button) findViewById(R.id.previous);
         songListBtn = (Button) findViewById(R.id.show_list);
+        mBackgroundLayout = (RelativeLayout) findViewById(R.id.background_view);
 
         mRemoteManager = RemoteViewManager.getInstance(this);
         mRemoteManager.initView();
@@ -221,7 +224,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
         filter.addAction(Consts.MY_PAUSE_ACTION);
         filter.addAction(Consts.MY_STOP_ACTION);
 
-        registerReceiver(mReceiver,filter);
+        registerReceiver(mReceiver, filter);
     }
 
     void refreshSongInfo(){
@@ -231,6 +234,10 @@ public class MainActivity extends Activity implements View.OnClickListener{
 
         mpv.setProgress(0);
         mpv.setMax(mPlayService.getCurDuration() / 1000);
+
+        mCoverViewPager.setCurrentItem(SongListManager.getInstance().getCurSongIndex(), true);
+
+        mBackgroundLayout.setBackground(new BitmapDrawable(getResources(), mPlayService.getCurBlurCover()));
     }
 
     void refreshSongBtn(){
@@ -251,7 +258,6 @@ public class MainActivity extends Activity implements View.OnClickListener{
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
-
 
 
     @Override
