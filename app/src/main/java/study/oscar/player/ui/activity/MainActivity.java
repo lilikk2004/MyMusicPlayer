@@ -7,10 +7,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.Menu;
@@ -37,6 +39,7 @@ import study.oscar.player.util.Consts;
 public class MainActivity extends Activity implements View.OnClickListener{
 
     private final static String TAG = "MainActivity";
+    private final static int MSG_CHANGE_COVER = 0;
 
     private MusicPlayerView mpv = null;
     private MusicService mPlayService = null;
@@ -227,6 +230,10 @@ public class MainActivity extends Activity implements View.OnClickListener{
         registerReceiver(mReceiver, filter);
     }
 
+    Object lock = new Object();
+
+    Bitmap bkBitmap = null;
+
     void refreshSongInfo(){
         mpv.setBitmap(mPlayService.getCurCover());
         mTextViewSong.setText(mPlayService.getCurSongName());
@@ -237,8 +244,42 @@ public class MainActivity extends Activity implements View.OnClickListener{
 
         mCoverViewPager.setCurrentItem(SongListManager.getInstance().getCurSongIndex(), true);
 
-        mBackgroundLayout.setBackground(new BitmapDrawable(getResources(), mPlayService.getCurBlurCover()));
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                int bkWidth = mBackgroundLayout.getWidth();
+                int bkHeight = mBackgroundLayout.getHeight();
+                if(bkWidth != 0 && bkHeight != 0){
+                    synchronized (lock) {
+                        bkBitmap = mPlayService.getCurBlurCover(bkWidth, bkHeight);
+                    }
+                    Message msg = Message.obtain();
+                    msg.what = MSG_CHANGE_COVER;
+                    mUIHandler.sendMessage(msg);
+                }
+            }
+        }).start();
     }
+
+    Handler mUIHandler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            if(msg == null){
+                return;
+            }
+            switch (msg.what){
+                case MSG_CHANGE_COVER: {
+                    if (bkBitmap != null) {
+                        mBackgroundLayout.setBackground(new BitmapDrawable(getResources(), bkBitmap));
+                    }
+                    break;
+                }
+                default:
+                    break;
+            }
+        }
+    };
 
     void refreshSongBtn(){
         if(SongListManager.getInstance().hasNext())

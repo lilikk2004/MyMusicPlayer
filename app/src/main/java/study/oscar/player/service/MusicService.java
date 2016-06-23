@@ -16,6 +16,7 @@ import java.io.IOException;
 import study.oscar.player.base.SongItem;
 import study.oscar.player.manager.SongListManager;
 import study.oscar.player.util.Consts;
+import study.oscar.player.util.ImageUtil;
 
 /**
  * Created by oscar on 2015/10/6.
@@ -181,8 +182,11 @@ public class MusicService extends IntentService{
         return mSong.getCover();
     }
 
-    public Bitmap getCurBlurCover(){
+    public Bitmap getCurBlurCover(int layoutWidth, int layoutHeight){
 
-        return blurBitmap(getCurCover());
+        Bitmap scaleBitmap = ImageUtil.getScaleImage(getCurCover(), layoutWidth, layoutHeight);
+        Bitmap outBitmap = ImageUtil.blurBitmap(scaleBitmap, getApplicationContext());
+        scaleBitmap.recycle();
+        return outBitmap;
     }
 }

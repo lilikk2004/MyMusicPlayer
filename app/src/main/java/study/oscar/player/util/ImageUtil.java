@@ -2,6 +2,9 @@ package study.oscar.player.util;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Rect;
 import android.renderscript.Allocation;
 import android.renderscript.Element;
 import android.renderscript.RenderScript;
@@ -13,7 +16,7 @@ import android.renderscript.ScriptIntrinsicBlur;
 public class ImageUtil {
 
 
-    public Bitmap blurBitmap(Bitmap bitmap,Context context){
+    static public Bitmap blurBitmap(Bitmap bitmap,Context context){
 
         //Let's create an empty bitmap with the same size of the bitmap we want to blur
         Bitmap outBitmap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
@@ -49,7 +52,7 @@ public class ImageUtil {
 
     }
 
-    static public Bitmap getScaleImage(Bitmap bitmap,int height,int width){
+    static public Bitmap getScaleImage(Bitmap bitmap,int width,int height){
         if(bitmap == null){
             return null;
         }
@@ -59,6 +62,21 @@ public class ImageUtil {
         if(bitHeight * width > bitWidth * height){
             srcWidth = bitWidth;
             srcHeight = bitWidth * height / width;
+        }else{
+            srcWidth = bitHeight * width / height;
+            srcHeight = bitHeight;
         }
+
+        Bitmap outBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        Canvas imgCanvas = new Canvas(outBitmap);
+
+        Rect srcRect = new Rect((bitWidth - srcWidth) / 2 ,(bitHeight - srcHeight) / 2 ,(bitWidth + srcWidth) / 2 ,(bitHeight + srcHeight) / 2);
+        Rect drawRect = new Rect(0, 0, width, height);
+
+        final Paint paint = new Paint();
+
+        imgCanvas.drawBitmap(bitmap, srcRect, drawRect, paint);
+
+        return outBitmap;
     }
 }
