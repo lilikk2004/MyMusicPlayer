@@ -120,6 +120,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
 
         @Override
         public void onPageSelected(int position) {
+            Log.d(TAG, "onPageSelected:" + position);
             mPlayService.switchSong(position);
         }
 

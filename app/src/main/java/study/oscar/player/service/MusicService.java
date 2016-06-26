@@ -6,10 +6,7 @@ import android.graphics.Bitmap;
 import android.media.MediaPlayer;
 import android.os.Binder;
 import android.os.IBinder;
-import android.renderscript.Allocation;
-import android.renderscript.Element;
-import android.renderscript.RenderScript;
-import android.renderscript.ScriptIntrinsicBlur;
+import android.util.Log;
 
 import java.io.IOException;
 
@@ -138,6 +135,9 @@ public class MusicService extends IntentService{
     }
 
     public void switchSong(int index){
+        if(mSongListManager.getCurSongIndex()  == index){
+            return;
+        }
         mSong = mSongListManager.switchSong(index);
         startSetPathThread();
     }
@@ -146,6 +146,7 @@ public class MusicService extends IntentService{
         new Thread(new Runnable() {
             @Override
             public void run() {
+                Log.d(TAG, "startSetPathThread run");
                 setMediaPath(mSongListManager.getCurSongPath(), true);
                 Intent switchIntent = new Intent();
                 switchIntent.setAction(Consts.MY_SWITCH_ACTION);
