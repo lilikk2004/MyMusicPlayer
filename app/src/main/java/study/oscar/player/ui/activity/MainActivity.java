@@ -34,6 +34,7 @@ import study.oscar.player.service.MusicService;
 import study.oscar.player.ui.adapter.CoverPagerAdapter;
 import study.oscar.player.ui.adapter.SongListAdapter;
 import study.oscar.player.ui.control.CoverViewPager;
+import study.oscar.player.ui.control.ImageBkLayout;
 import study.oscar.player.util.Consts;
 
 public class MainActivity extends Activity implements View.OnClickListener{
@@ -55,7 +56,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
 
     private CoverViewPager mCoverViewPager = null;
     private CoverPagerAdapter coverPagerAdapter = null;
-    private RelativeLayout mBackgroundLayout;
+    private ImageBkLayout mBackgroundLayout;
 
 
     private BroadcastReceiver mReceiver;
@@ -87,7 +88,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
         nextBtn = (Button) findViewById(R.id.next);
         prevBtn = (Button) findViewById(R.id.previous);
         songListBtn = (Button) findViewById(R.id.show_list);
-        mBackgroundLayout = (RelativeLayout) findViewById(R.id.background_view);
+        mBackgroundLayout = (ImageBkLayout) findViewById(R.id.background_view);
 
         mRemoteManager = RemoteViewManager.getInstance(this);
         mRemoteManager.initView();
@@ -272,7 +273,8 @@ public class MainActivity extends Activity implements View.OnClickListener{
             switch (msg.what){
                 case MSG_CHANGE_COVER: {
                     if (bkBitmap != null) {
-                        mBackgroundLayout.setBackground(new BitmapDrawable(getResources(), bkBitmap));
+                        //mBackgroundLayout.setBackground(new BitmapDrawable(getResources(), bkBitmap));
+                        mBackgroundLayout.setBitmap(bkBitmap);
                     }
                     break;
                 }

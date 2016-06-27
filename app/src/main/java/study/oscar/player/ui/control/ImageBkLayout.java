@@ -6,16 +6,20 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.os.Handler;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
+import android.widget.RelativeLayout;
 
 /**
  * Created by oscar on 2016/6/26.
  */
-public class ImageBkView extends View {
+public class ImageBkLayout extends RelativeLayout {
 
-    public ImageBkView(Context context, AttributeSet attrs) {
+    public ImageBkLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
+        setWillNotDraw(false);
     }
+    private final static String TAG = "ImageBkLayout";
 
     private Bitmap bitmapA = null;
     private Bitmap bitmapB = null;
@@ -29,18 +33,21 @@ public class ImageBkView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        Log.d(TAG, "onDraw alphaA:" + alphaA);
         if(mode == IMG_NULL){
             return;
         }
         Paint paint = new Paint();
         if(alphaA == 255){
             if(bitmapA != null) {
+                Log.d(TAG, "draw bitmapA");
                 canvas.drawBitmap(bitmapA, 0, 0, paint);
             }
             return;
         }
         if(alphaA == 0){
             if(bitmapB != null) {
+                Log.d(TAG, "draw bitmapB");
                 canvas.drawBitmap(bitmapB, 0, 0, paint);
             }
             return;
@@ -49,9 +56,10 @@ public class ImageBkView extends View {
         paint.setAlpha(alphaA);
         canvas.drawBitmap(bitmapA, 0, 0, paint);
         paint.setAlpha(255 - alphaA);
+        canvas.drawBitmap(bitmapB, 0, 0, paint);
     }
 
-    void setBitmap(Bitmap bitmap){
+    public void setBitmap(Bitmap bitmap){
         if(mode == IMG_NULL){
             alphaA = 255;
             mode = IMG_A;
@@ -62,11 +70,13 @@ public class ImageBkView extends View {
         if(mode == IMG_A){
             mode = IMG_B;
             bitmapB = bitmap;
+            mHandler.postDelayed(mRunnableChange, CHANGE_DELAY);
             return;
         }
         if(mode == IMG_B){
             mode = IMG_A;
-            bitmapB = bitmap;
+            bitmapA = bitmap;
+            mHandler.postDelayed(mRunnableChange, CHANGE_DELAY);
             return;
         }
     }
